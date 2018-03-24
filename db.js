@@ -2,8 +2,8 @@
 
 var env = require('dotenv').config();
 var mysql = require('mysql');
-var configPrefix = 'LOCAL_';
-// var configPrefix = 'AWS_';
+//var configPrefix = 'LOCAL_';
+var configPrefix = 'AWS_';
 
 var db = mysql.createConnection({
   host     : process.env[configPrefix + 'DB_HOST'],

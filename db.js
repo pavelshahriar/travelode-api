@@ -1,16 +1,15 @@
 'use strict';
 
-var env = require('dotenv').config();
-var mysql = require('mysql');
-//var configPrefix = 'LOCAL_';
-var configPrefix = 'AWS_';
+const mysql = require('mysql');
 
-var db = mysql.createConnection({
-  host     : process.env[configPrefix + 'DB_HOST'],
-  user     : process.env[configPrefix + 'DB_USER'],
-  password : process.env[configPrefix + 'DB_PASS'],
-  database : process.env[configPrefix + 'DB_NAME'],
-  port     : process.env[configPrefix + 'DB_POST']
+const config = require('./config');
+
+const db = mysql.createConnection({
+  host     : config.db_host,
+  user     : config.db_user,
+  password : config.db_pass,
+  database : config.db_name,
+  port     : config.db_port
 });
 
 db.connect(function(err){

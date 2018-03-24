@@ -2,24 +2,22 @@ swagger: "2.0"
 info:
   version: "0.0.1"
   title: Travelode API
-# during dev, should point to your local machine
-host: localhost:10010
-# basePath prefixes all resource paths 
+
+host: 127.0.0.1:10010
 basePath: /
-#
+schemes:
+  - http
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+
 tags:
   - name: User
     description: User APIs. Find and create user. Get, update, delete user by id. Get user by credentials.
-schemes:
-  # tip: remove http to make production-grade
-  - http
-  - https
-# format of bodies a client can send (Content-Type)
-consumes:
-  - application/json
-# format of the responses to the client (Accepts)
-produces:
-  - application/json
+
 paths:
   /user:
     # binds a127 app logic to a route

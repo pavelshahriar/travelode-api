@@ -6,7 +6,7 @@
   "keywords": [],
   "author": "",
   "license": "",
-  "main": "app.js",
+  "main": "server.js",
   "dependencies": {
     "dotenv": "^5.0.1",
     "express": "^4.12.3",
@@ -22,7 +22,7 @@
     "supertest": "^1.0.0"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "node server.js",
     "test": "swagger project test"
   }
 }

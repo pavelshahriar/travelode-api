@@ -2,7 +2,10 @@
 
 require('dotenv').config();
 
+// @Todo: Automate this
 const env = 'local';
+// const env = 'aws';
+
 const env_prefix = env.toUpperCase() + '_';
 
 const configs = {

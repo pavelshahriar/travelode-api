@@ -14,7 +14,7 @@ module.exports = server; // for testing
 
 // Init Swagger UI
 const swaggerDoc = yaml.load(config.appRoot + '/api/swagger/swagger.yaml');
-swaggerDoc.host = host + ':' + port;
+swaggerDoc.host = (host !== 'localhost') ? host : host + ':' + port;
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   // Serve the Swagger documents and Swagger UI
   server.use(middleware.swaggerUi());

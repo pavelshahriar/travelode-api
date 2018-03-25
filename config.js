@@ -13,10 +13,6 @@ const configs = {
   db_port : process.env['DB_PORT']
 };
 
-if (process.env['NODE_ENV'] !== 'local') {
-  configs['host'] = process.env.CUSTOMVAR_HOSTNAME;
-}
-
 console.log('Configs :');
 console.log('%o', configs);
 

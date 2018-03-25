@@ -33,5 +33,5 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 });
 
 server.get('/', function (req,res) {
-  res.send('Welcome to Travelode API v0.1 ! <br>Please load : ' + host + ':' + port +'/docs')
+  res.redirect('http://' + swaggerDoc.host + '/docs');
 });

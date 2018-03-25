@@ -1,10 +1,12 @@
 'use strict';
 
+const config = require('./config');
+const host = process.env.HOST || config.host; // Important for Heroku
+const port = process.env.PORT || config.port; // Important for Heroku
+
 const express = require('express');
 const swaggerTools = require('swagger-tools');
 const yaml = require('yamljs');
-
-const config = require('./config');
 
 // Init Server
 const server = express();
@@ -12,7 +14,7 @@ module.exports = server; // for testing
 
 // Init Swagger UI
 const swaggerDoc = yaml.load(config.appRoot + '/api/swagger/swagger.yaml');
-swaggerDoc.host = config.hostUrl + ':' + config.port
+swaggerDoc.host = host + ':' + port;
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   // Serve the Swagger documents and Swagger UI
   server.use(middleware.swaggerUi());
@@ -27,9 +29,10 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 
   // install middleware
   swaggerExpress.register(server);
-  server.listen(process.env.PORT || config.port);
+  server.listen(port);
+  console.log('Server started here : ' + host + ':' + port);
 });
 
-server.get('/', (req,res) => {
-  res.send('Hello Traveler!')
+server.get('/', function (req,res) {
+  res.send('Welcome to Travelode API v0.1 ! <br>Please load : ' + host + ':' + port +'/docs')
 });

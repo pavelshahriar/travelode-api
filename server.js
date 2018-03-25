@@ -1,7 +1,7 @@
 'use strict';
 
 const config = require('./config');
-const host = process.env.HOST || config.host; // Important for Heroku
+const host = process.env.CUSTOMVAR_HOSTNAME || config.host; // Important for Heroku
 const port = process.env.PORT || config.port; // Important for Heroku
 
 const express = require('express');
@@ -30,7 +30,6 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   // install middleware
   swaggerExpress.register(server);
   server.listen(port);
-  console.log('Server started here : ' + host + ':' + port);
 });
 
 server.get('/', function (req,res) {

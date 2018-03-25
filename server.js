@@ -27,7 +27,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 
   // install middleware
   swaggerExpress.register(server);
-  server.listen(config.port);
+  server.listen(process.env.PORT || config.port);
 });
 
 server.get('/', (req,res) => {

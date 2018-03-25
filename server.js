@@ -29,3 +29,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   swaggerExpress.register(server);
   server.listen(config.port);
 });
+
+server.get('/', (req,res) => {
+  res.send('Hello Traveler!')
+});

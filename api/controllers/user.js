@@ -5,9 +5,9 @@ const db = require('../../db');
 
 module.exports = {
   findUsers: findUsers,
+  createUser: createUser,
   getUserById: getUserById,
   retrieveUserByLogin: retrieveUserByLogin,
-  createUser: createUser,
   updateUserById: updateUserById,
   deleteUserById: deleteUserById
 };
@@ -32,6 +32,23 @@ function findUsers(req, res) {
     else {
       console.error(err);
       res.send(err)
+    }
+  });
+}
+
+function createUser(req, res) {
+  const user_data = req.swagger.params.userData.value;
+  user_data['created'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+  const query = db.query('INSERT INTO user SET ?', user_data, function(err, result) {
+    console.log(query.sql);
+    if (!err) {
+      console.log('User Created: ', result);
+      res.json(util.format('%s', 'User Created'));
+    }
+    else {
+      console.error(err);
+      res.status(500).json(util.format('%s', err));
     }
   });
 }
@@ -64,23 +81,6 @@ function retrieveUserByLogin(req, res) {
     else {
       console.error(err);
       res.send(err)
-    }
-  });
-}
-
-function createUser(req, res) {
-  const user_data = req.swagger.params.userData.value;
-  user_data['created'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
-
-  const query = db.query('INSERT INTO user SET ?', user_data, function(err, result) {
-    console.log(query.sql);
-    if (!err) {
-      console.log('User Created: ', result);
-      res.json(util.format('%s', 'User Created'));
-    }
-    else {
-      console.error(err);
-      res.status(500).json(util.format('%s', err));
     }
   });
 }

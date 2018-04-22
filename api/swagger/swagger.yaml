@@ -248,6 +248,42 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+    post:
+      tags:
+        - Travelode
+      summary: Create new travelode
+      operationId: createTravelode
+      consumes:
+        - multipart/form-data
+      produces:
+          - application/json
+      parameters:
+        - in: formData
+          name: title
+          description: Title of the Travelode
+          required: true
+          type: string
+        - in: formData
+          name: description
+          description: Description of the Travelode
+          required: false
+          type: string
+        - in: formData
+          name: userId
+          description: Creator / owner of the Travelode
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
   /swagger:
     x-swagger-pipe: swagger_raw
 

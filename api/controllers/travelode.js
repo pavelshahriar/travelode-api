@@ -6,7 +6,8 @@ const privacy = require('../../shared/privacyTranslator');
 privacy.getAllPrivacy();
 
 module.exports = {
-  findTravelodes: findTravelodes
+  findTravelodes: findTravelodes,
+  createTravelode: createTravelode
 };
 
 const tableNameTravelode = 'travelode';
@@ -30,6 +31,28 @@ function findTravelodes(req, res) {
     else {
       console.error(err);
       res.send(err)
+    }
+  });
+}
+
+function createTravelode(req, res) {
+  const travelode_data = {
+    "title" : req.swagger.params.title.value,
+    "description" : req.swagger.params.description.value,
+    "userId" : req.swagger.params.userId.value,
+    "privacy" : privacy.privacyMatrix.findIndex(el => el === 'public'),
+    "created" : new Date().toISOString().slice(0, 19).replace('T', ' ')
+  };
+
+  const query = db.query('INSERT INTO ' + tableNameTravelode + ' SET ?', travelode_data, function(err, result) {
+    console.log(query.sql);
+    if (!err) {
+      console.log('Travelode Created: ', result);
+      res.json(util.format('%s', 'Travelode Created'));
+    }
+    else {
+      console.error(err);
+      res.status(500).json(util.format('%s', err));
     }
   });
 }

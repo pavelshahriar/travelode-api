@@ -37,8 +37,11 @@ function findUsers(req, res) {
 }
 
 function createUser(req, res) {
-  const user_data = req.swagger.params.userData.value;
-  user_data['created'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  const user_data = {
+    "email" : req.swagger.params.email.value,
+    "password" : req.swagger.params.password.value,
+    "created" : new Date().toISOString().slice(0, 19).replace('T', ' ')
+  };
 
   const query = db.query('INSERT INTO user SET ?', user_data, function(err, result) {
     console.log(query.sql);
@@ -57,30 +60,17 @@ function getUserById(req, res) {
   const id = req.swagger.params.id.value;
   const query = db.query('SELECT '+ selectUserItems +' FROM ' + tableNameUser + ' WHERE id = ? LIMIT 0, 1', id, function(err, result) {
     console.log(query.sql);
-    if (!err) {
+    if (err) {
+      console.error(err);
+      res.send(err)
+    }
+    else if (result.length === 0) {
+      console.error('No User Found');
+      res.status(404).json(util.format('%s', 'No User Found'));
+    }
+    else {
       console.log('Get User By Id : ', result);
       res.send(result);
-    }
-    else {
-      console.error(err);
-      res.send(err)
-    }
-  });
-}
-
-function retrieveUserByLogin(req, res) {
-  const login_credential = req.swagger.params.loginCredential.value;
-  const query = db.query(
-      'SELECT '+ selectUserItems +' FROM ' + tableNameUser + ' WHERE email = ? AND password = ? LIMIT 0, 1',
-      [login_credential.email, login_credential.password], function(err, result) {
-    console.log(query.sql);
-    if (!err) {
-      console.log('Retrieve User By Login : ', result);
-      res.send(result);
-    }
-    else {
-      console.error(err);
-      res.send(err)
     }
   });
 }
@@ -137,6 +127,33 @@ function deleteUserById(req, res) {
     else {
       console.log('Delete User: ', result);
       res.json(util.format('%s', 'User Deleted'));
+    }
+  });
+}
+
+function retrieveUserByLogin(req, res) {
+  const login_credential = {
+    "email" : req.swagger.params.email.value,
+    "password" : req.swagger.params.password.value
+  };
+
+  const query = db.query(
+      'SELECT '+ selectUserItems +' FROM ' + tableNameUser + ' WHERE email = ? AND password = ? LIMIT 0, 1',
+      [login_credential.email, login_credential.password], function(err, result) {
+    console.log(query.sql);
+    if (err) {
+      console.error(err);
+      res.send(err);
+    }
+    // Send 401 if the resource is not found
+    else if (result.length === 0){
+      console.log('Invalid Login Credentials');
+      res.status(401).json(util.format('%s', 'Invalid Login Credentials'));
+    }
+    // Success
+    else {
+      console.log('Retrieve User By Login : ', result);
+      res.send(result);
     }
   });
 }

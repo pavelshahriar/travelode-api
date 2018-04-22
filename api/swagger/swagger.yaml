@@ -28,7 +28,7 @@ paths:
     get:
       tags:
         - User
-      description: Returns users list
+      summary: Returns users list
       operationId: findUsers
       parameters:
         - name: page
@@ -67,21 +67,23 @@ paths:
         - User
       summary: Create new user
       operationId: createUser
+      consumes:
+        - multipart/form-data
+      produces:
+          - application/json
       parameters:
-        - in: body
-          name: userData
-          description: User data to create a new user
+        - in: formData
+          name: email
+          description: Email id of the user, has to be unique
           required: true
-          schema:
-            type: object
-            required:
-              - email
-              - password
-            properties:
-              email:
-                type: string
-              password:
-                type: string
+          type: string
+          format: email
+        - in: formData
+          name: password
+          description: Password of the user
+          required: true
+          type: string
+          format: password
       responses:
         "200":
           description: Success
@@ -99,7 +101,7 @@ paths:
     get:
       tags:
         - User
-      description: Returns a single user
+      summary: Returns a single user
       operationId: getUserById
       parameters:
         - name: id
@@ -182,21 +184,23 @@ paths:
         - User
       summary: Retrieve user by login credentials
       operationId: retrieveUserByLogin
+      consumes:
+        - multipart/form-data
+      produces:
+          - application/json
       parameters:
-        - in: body
-          name: loginCredential
-          description: Login credential to retrieve the user
+        - in: formData
+          name: email
+          description: Email id of the user
           required: true
-          schema:
-            type: object
-            required:
-              - email
-              - password
-            properties:
-              email:
-                type: string
-              password:
-                type: string
+          type: string
+          format: email
+        - in: formData
+          name: password
+          description: Password of the user
+          required: true
+          type: string
+          format: password
       responses:
         "200":
           description: Success
@@ -214,7 +218,7 @@ paths:
     get:
       tags:
         - Travelode
-      description: Returns travelode list
+      summary: Returns travelode list
       operationId: findTravelodes
       parameters:
         - name: page
@@ -283,6 +287,32 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+
+  /travelode/{id}:
+    x-swagger-router-controller: travelode
+
+    get:
+      tags:
+        - Travelode
+      summary: Returns a single travelode details
+      operationId: getTravelodeById
+      parameters:
+        - name: id
+          in: path
+          description: The Travelode Id
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/TravelodeListResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
 
   /swagger:
     x-swagger-pipe: swagger_raw

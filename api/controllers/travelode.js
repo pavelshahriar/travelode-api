@@ -7,7 +7,8 @@ privacy.getAllPrivacy();
 
 module.exports = {
   findTravelodes: findTravelodes,
-  createTravelode: createTravelode
+  createTravelode: createTravelode,
+  getTravelodeById: getTravelodeById
 };
 
 const tableNameTravelode = 'travelode';
@@ -53,6 +54,25 @@ function createTravelode(req, res) {
     else {
       console.error(err);
       res.status(500).json(util.format('%s', err));
+    }
+  });
+}
+
+function getTravelodeById(req, res) {
+  const id = req.swagger.params.id.value;
+  const query = db.query('SELECT '+ selectTravelodeItems +' FROM ' + tableNameTravelode + ' WHERE id = ? LIMIT 0, 1', id, function(err, result) {
+    console.log(query.sql);
+    if (err) {
+      console.error(err);
+      res.send(err)
+    }
+    else if (result.length === 0) {
+      console.error('No Travelode Found');
+      res.status(404).json(util.format('%s', 'No Travelode Found'));
+    }
+    else {
+      console.log('Get Travelode By Id : ', result);
+      res.send(result);
     }
   });
 }

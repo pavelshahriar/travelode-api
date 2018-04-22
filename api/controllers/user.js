@@ -31,7 +31,7 @@ function findUsers(req, res) {
     }
     else {
       console.error(err);
-      res.send(err)
+      res.status(500).json(util.format('%s', err));
     }
   });
 }
@@ -62,7 +62,7 @@ function getUserById(req, res) {
     console.log(query.sql);
     if (err) {
       console.error(err);
-      res.send(err)
+      res.status(500).json(util.format('%s', err));
     }
     else if (result.length === 0) {
       console.error('No User Found');
@@ -80,7 +80,7 @@ function updateUserById(req, res) {
   const user_data =  req.swagger.params.userData.value;
   user_data['updated'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-  const query1 = db.query('SELECT email FROM ' + tableNameUser + ' WHERE id = ?', id, function (err, result) {
+  const query1 = db.query('SELECT ' + selectUserItems + ' FROM ' + tableNameUser + ' WHERE id = ?', id, function (err, result) {
     console.log(query1.sql);
     // send error if there is error
     if (err) {
@@ -94,7 +94,7 @@ function updateUserById(req, res) {
     }
     // if resource is available, proceed with updates
     else {
-      const query2 = db.query('UPDATE user SET ? WHERE id = ?', [user_data, id], function(err, result) {
+      const query2 = db.query('UPDATE ' + tableNameUser + ' SET ? WHERE id = ?', [user_data, id], function(err, result) {
         console.log(query2.sql);
         if (!err) {
           console.log('Update User: ', result);
@@ -120,13 +120,13 @@ function deleteUserById(req, res) {
     }
     // Send 404 if the resource is not found
     else if (result.affectedRows === 0) {
-      console.log('Update User: ', result);
+      console.log('Delete User: ', result);
       res.status(404).json(util.format('%s', 'User Not Found'));
     }
     // Success
     else {
       console.log('Delete User: ', result);
-      res.json(util.format('%s', 'User Deleted'));
+      res.status(204).json(util.format('%s', 'User Deleted'));
     }
   });
 }
@@ -143,7 +143,7 @@ function retrieveUserByLogin(req, res) {
     console.log(query.sql);
     if (err) {
       console.error(err);
-      res.send(err);
+      res.status(500).json(util.format('%s', err));
     }
     // Send 401 if the resource is not found
     else if (result.length === 0){

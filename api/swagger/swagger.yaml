@@ -161,12 +161,12 @@ paths:
       parameters:
         - name: id
           in: path
-          description: The user id to update
+          description: The user id to delete
           required: true
           type: integer
           minimum: 1
       responses:
-        "200":
+        "204":
           description: Success
           schema:
             $ref: "#/definitions/SuccessResponse"
@@ -313,6 +313,60 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+    put:
+      tags:
+        - Travelode
+      summary: Update a travelode
+      operationId: updateTravelodeById
+      parameters:
+        - name: id
+          in: path
+          description: The travelode id to update
+          required: true
+          type: integer
+          minimum: 1
+        - name: travelodeData
+          in: body
+          description: The travelode data to update
+          required: true
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              description:
+                type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - Travelode
+      summary: Delete a travelode
+      operationId: deleteTravelodeById
+      parameters:
+        - name: id
+          in: path
+          description: The travelode id to delete
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        "204":
+          description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 
   /swagger:
     x-swagger-pipe: swagger_raw

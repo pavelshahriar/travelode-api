@@ -1,7 +1,7 @@
 'use strict';
 
-var util = require('util');
-var db = require('../../db');
+const util = require('util');
+const db = require('../../db');
 
 module.exports = {
   findUsers: findUsers,
@@ -12,17 +12,18 @@ module.exports = {
   deleteUserById: deleteUserById
 };
 
-var selectItems = 'id, email, fullname, photo';
+const tableNameUser = 'user';
+const selectUserItems = 'email, fullname, photo, created, updated';
 
 function findUsers(req, res) {
-  var page = req.swagger.params.page.value || 0;
-  var size = req.swagger.params.size.value || 50;
-  var email = req.swagger.params.email.value || 'com';
-  var fullname = req.swagger.params.fullname.value || '';
+  const page = req.swagger.params.page.value || 0;
+  const size = req.swagger.params.size.value || 50;
+  const email = req.swagger.params.email.value || '';
+  const fullname = req.swagger.params.fullname.value || '';
 
-  var query = db.query(
-      'SELECT '+ selectItems +' FROM user WHERE email LIKE ? AND fullname LIKE ? LIMIT ' + (page * size) + ', ' + size,
-      ['%'+email+'%', '%'+fullname+'%'], function(err, result) {
+  const query = db.query(
+      'SELECT '+ selectUserItems +' FROM ' + tableNameUser + ' WHERE email LIKE ? AND fullname LIKE ? LIMIT ?, ?',
+      ['%'+email+'%', '%'+fullname+'%', (page * size), parseInt(size)], function(err, result) {
     console.log(query.sql);
     if (!err) {
       console.log('Find Users: ', result);
@@ -36,8 +37,8 @@ function findUsers(req, res) {
 }
 
 function getUserById(req, res) {
-  var id = req.swagger.params.id.value;
-  var query = db.query('SELECT '+ selectItems +' FROM user WHERE id = ? LIMIT 0, 1', id, function(err, result) {
+  const id = req.swagger.params.id.value;
+  const query = db.query('SELECT '+ selectUserItems +' FROM ' + tableNameUser + ' WHERE id = ? LIMIT 0, 1', id, function(err, result) {
     console.log(query.sql);
     if (!err) {
       console.log('Get User By Id : ', result);
@@ -51,9 +52,9 @@ function getUserById(req, res) {
 }
 
 function retrieveUserByLogin(req, res) {
-  var login_credential = req.swagger.params.loginCredential.value;
-  var query = db.query(
-      'SELECT '+ selectItems +' FROM user WHERE email = ? AND password = ? LIMIT 0, 1',
+  const login_credential = req.swagger.params.loginCredential.value;
+  const query = db.query(
+      'SELECT '+ selectUserItems +' FROM ' + tableNameUser + ' WHERE email = ? AND password = ? LIMIT 0, 1',
       [login_credential.email, login_credential.password], function(err, result) {
     console.log(query.sql);
     if (!err) {
@@ -68,8 +69,10 @@ function retrieveUserByLogin(req, res) {
 }
 
 function createUser(req, res) {
-  var user_data = req.swagger.params.userData.value;
-  var query = db.query('INSERT INTO user SET ?', user_data, function(err, result) {
+  const user_data = req.swagger.params.userData.value;
+  user_data['created'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+  const query = db.query('INSERT INTO user SET ?', user_data, function(err, result) {
     console.log(query.sql);
     if (!err) {
       console.log('User Created: ', result);
@@ -83,10 +86,11 @@ function createUser(req, res) {
 }
 
 function updateUserById(req, res) {
-  var id = req.swagger.params.id.value;
-  var user_data =  req.swagger.params.userData.value;
+  const id = req.swagger.params.id.value;
+  const user_data =  req.swagger.params.userData.value;
+  user_data['updated'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-  var query1 = db.query('SELECT email FROM user WHERE id = ?', id, function (err, result) {
+  const query1 = db.query('SELECT email FROM ' + tableNameUser + ' WHERE id = ?', id, function (err, result) {
     console.log(query1.sql);
     // send error if there is error
     if (err) {
@@ -100,7 +104,7 @@ function updateUserById(req, res) {
     }
     // if resource is available, proceed with updates
     else {
-      var query2 = db.query('UPDATE user SET ? WHERE id = ?', [user_data, id], function(err, result) {
+      const query2 = db.query('UPDATE user SET ? WHERE id = ?', [user_data, id], function(err, result) {
         console.log(query2.sql);
         if (!err) {
           console.log('Update User: ', result);
@@ -116,8 +120,8 @@ function updateUserById(req, res) {
 }
 
 function deleteUserById(req, res) {
-  var id = req.swagger.params.id.value;
-  var query = db.query('DELETE FROM user WHERE id = ?', id, function(err, result) {
+  const id = req.swagger.params.id.value;
+  const query = db.query('DELETE FROM ' + tableNameUser + ' WHERE id = ?', id, function(err, result) {
     console.log(query.sql);
     // Check for errors
     if (err) {

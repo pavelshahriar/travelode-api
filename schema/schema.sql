@@ -105,6 +105,31 @@ LOCK TABLES `media` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `privacy`
+--
+
+DROP TABLE IF EXISTS `privacy`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `privacy` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `type_UNIQUE` (`type`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `privacy`
+--
+
+LOCK TABLES `privacy` WRITE;
+/*!40000 ALTER TABLE `privacy` DISABLE KEYS */;
+INSERT INTO `privacy` VALUES (2,'friends'),(1,'private'),(3,'public');
+/*!40000 ALTER TABLE `privacy` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `travelode`
 --
 
@@ -122,6 +147,8 @@ CREATE TABLE `travelode` (
   `coverId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `travelodeUserId_idx` (`userId`),
+  KEY `travelodePrivacyId_idx` (`privacy`),
+  CONSTRAINT `travelodePrivacyId` FOREIGN KEY (`privacy`) REFERENCES `privacy` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `travelodeUserId` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -156,12 +183,13 @@ CREATE TABLE `travelode_media` (
   `isCover` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `isCover` (`isCover`),
-  KEY `privacy` (`privacy`),
   KEY `travelodeMediaMediaId_idx` (`mediaId`),
   KEY `travelodeMediaDisplayLocationId_idx` (`displayLocationId`),
   KEY `travelodeMediaTravelodeId_idx` (`travelodeId`),
+  KEY `travelodeMediaPrivacyId_idx` (`privacy`),
   CONSTRAINT `travelodeMediaDisplayLocationId` FOREIGN KEY (`displayLocationId`) REFERENCES `location` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   CONSTRAINT `travelodeMediaMediaId` FOREIGN KEY (`mediaId`) REFERENCES `media` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `travelodeMediaPrivacyId` FOREIGN KEY (`privacy`) REFERENCES `privacy` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `travelodeMediaTravelodeId` FOREIGN KEY (`travelodeId`) REFERENCES `travelode` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -217,13 +245,14 @@ CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(45) NOT NULL,
   `password` varchar(45) NOT NULL,
-  `fullname` varchar(145) NOT NULL,
+  `fullname` varchar(145) DEFAULT NULL,
   `photo` varchar(150) DEFAULT NULL,
-  `created` datetime DEFAULT NULL,
+  `created` datetime NOT NULL,
+  `updated` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -232,7 +261,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'pslocal@g.com','MED@B0$$','Pavel Shahriar',NULL,NULL);
+INSERT INTO `user` VALUES (1,'pavel@travelode.com','MED@B0$$','Pavel Shahriar',NULL,'2018-04-20 23:31:37','2018-04-21 04:01:48'),(2,'mush@travelode.com','mush123',NULL,NULL,'2018-04-20 23:35:55',NULL),(3,'sajid@travelode.com','mush123',NULL,NULL,'2018-04-20 23:36:29',NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -245,4 +274,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-19  6:30:19
+-- Dump completed on 2018-04-21 14:20:21

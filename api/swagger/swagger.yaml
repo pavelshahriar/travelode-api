@@ -14,10 +14,11 @@ consumes:
 produces:
   - application/json
 
-
 tags:
   - name: User
     description: User APIs. Find and create user. Get, update, delete user by id. Get user by credentials.
+  - name: Travelode
+    description: Travelode APIs. Find and create travelode. Get, update, delete travelode by id.
 
 paths:
   /user:
@@ -92,7 +93,6 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
-
   /user/{id}:
     x-swagger-router-controller: user
 
@@ -136,11 +136,7 @@ paths:
           required: true
           schema:
             type: object
-            required:
-              - email
             properties:
-              email:
-                type: string
               fullname:
                 type: string
               photo:
@@ -211,6 +207,46 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  /travelode:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: travelode
+
+    get:
+      tags:
+        - Travelode
+      description: Returns travelode list
+      operationId: findTravelodes
+      parameters:
+        - name: page
+          in: query
+          description: The page number to get. Default to 0.
+          required: false
+          type: string
+        - name: size
+          in: query
+          description: The size of the page to get. Default to 50.
+          required: false
+          type: string
+        - name: title
+          in: query
+          description: Find by travelode title
+          required: false
+          type: string
+        - name: userId
+          in: query
+          description: Find by userId
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/TravelodeListResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 
   /swagger:
     x-swagger-pipe: swagger_raw
@@ -246,6 +282,14 @@ definitions:
       photo:
         description: User Photo URL
         type: string
+      created:
+        description: User Creation Date Time
+        type: string
+        format: date-time
+      updated:
+        description: User Update Date time
+        type: string
+        format: date-time
 
   UserListResponse:
     required:
@@ -256,3 +300,37 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/User"
+
+  Travelode:
+    type: object
+    properties:
+      id:
+        type: number
+        description: Travelode Id
+      title:
+        type: string
+        description: Travelode Title
+      description:
+        type: string
+        description: Travelode Description
+      userId:
+        type: string
+        description: Travelode Owner UserId
+      created:
+        description: Travelode Creation Date Time
+        type: string
+        format: date-time
+      updated:
+        description: Travelode Update Date time
+        type: string
+        format: date-time
+
+  TravelodeListResponse:
+    required:
+      - travelodes
+    properties:
+      # The array of users
+      travelodes:
+        type: array
+        items:
+          $ref: "#/definitions/Travelode"

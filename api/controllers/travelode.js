@@ -14,7 +14,7 @@ module.exports = {
 };
 
 const tableNameTravelode = 'travelode';
-const selectTravelodeItems = 'title, description, userId, created, updated, coverId';
+const selectTravelodeItems = 'id, title, description, userId, created, updated, coverId';
 
 function findTravelodes(req, res) {
   const page = req.swagger.params.page.value || 0;

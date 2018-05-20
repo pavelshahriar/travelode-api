@@ -51,7 +51,7 @@ function createTravelode(req, res) {
     console.log(query.sql);
     if (!err) {
       console.log('Travelode Created: ', result);
-      res.json(util.format('%s', 'Travelode Created'));
+      res.json({"message" : "Travelode Created"});
     }
     else {
       console.error(err);

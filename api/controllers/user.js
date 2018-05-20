@@ -47,7 +47,7 @@ function createUser(req, res) {
     console.log(query.sql);
     if (!err) {
       console.log('User Created: ', result);
-      res.json(util.format('%s', 'User Created'));
+      res.json({"message" : "User Created"});
     }
     else {
       console.error(err);

@@ -8,6 +8,9 @@ const express = require('express');
 const swaggerTools = require('swagger-tools');
 const yaml = require('yamljs');
 
+const s3 = require('./s3.js');
+s3.isBucketPresent('travelode.media.' + config.env);
+
 // Init Server
 const server = express();
 module.exports = server; // for testing

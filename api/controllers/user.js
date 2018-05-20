@@ -22,7 +22,7 @@ function findUsers(req, res) {
   const fullname = req.swagger.params.fullname.value || '';
 
   const query = db.query(
-      'SELECT '+ selectUserItems +' FROM ' + tableNameUser + ' WHERE email LIKE ? AND fullname LIKE ? LIMIT ?, ?',
+      'SELECT '+ selectUserItems +' FROM ' + tableNameUser + ' WHERE email LIKE ? OR fullname LIKE ? LIMIT ?, ?',
       ['%'+email+'%', '%'+fullname+'%', (page * size), parseInt(size)], function(err, result) {
     console.log(query.sql);
     if (!err) {

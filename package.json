@@ -8,8 +8,11 @@
   "license": "",
   "main": "server.js",
   "dependencies": {
+    "aws-config": "^1.1.4",
+    "aws-sdk": "^2.243.1",
     "dotenv": "^5.0.1",
     "express": "^4.12.3",
+    "fs": "0.0.1-security",
     "lodash": "^4.17.5",
     "mysql": "^2.15.0",
     "swagger": "^0.7.5",

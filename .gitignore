@@ -16,6 +16,10 @@ pids
 # Dependency directory
 node_modules
 
+# exclude all of uploads folder, but keep the folder itself
+uploads/*
+!uploads/.gitkeep
+
 # Users Environment Variables
 .lock-wscript
 .env

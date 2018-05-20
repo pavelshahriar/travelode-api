@@ -31,7 +31,7 @@ function findUsers(req, res) {
     }
     else {
       console.error(err);
-      res.status(500).json(util.format('%s', err));
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
     }
   });
 }
@@ -47,11 +47,11 @@ function createUser(req, res) {
     console.log(query.sql);
     if (!err) {
       console.log('User Created: ', result);
-      res.json({"message" : "User Created"});
+      res.send(formatResponseMessage("User Created"));
     }
     else {
       console.error(err);
-      res.status(500).json(util.format('%s', err));
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
     }
   });
 }
@@ -62,11 +62,11 @@ function getUserById(req, res) {
     console.log(query.sql);
     if (err) {
       console.error(err);
-      res.status(500).json(util.format('%s', err));
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
     }
     else if (result.length === 0) {
       console.error('No User Found');
-      res.status(404).json(util.format('%s', 'No User Found'));
+      res.status(404).send(formatResponseMessage('No User Found'));
     }
     else {
       console.log('Get User By Id : ', result);
@@ -85,12 +85,12 @@ function updateUserById(req, res) {
     // send error if there is error
     if (err) {
       console.error(err);
-      res.status(500).json(util.format('%s', err));
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
     }
     // send 404 if the resource was not found
     else if (result.length === 0) {
       console.log('Update User: ', result);
-      res.status(404).json(util.format('%s', 'User Not Found'));
+      res.status(404).send(formatResponseMessage('User Not Found'));
     }
     // if resource is available, proceed with updates
     else {
@@ -98,11 +98,11 @@ function updateUserById(req, res) {
         console.log(query2.sql);
         if (!err) {
           console.log('Update User: ', result);
-          res.json(util.format('%s', 'User Updated'));
+          res.send(formatResponseMessage('User Updated'));
         }
         else {
           console.error(err);
-          res.status(500).json(util.format('%s', err));
+          res.status(500).send(formatResponseMessage(util.format('%s', err)));
         }
       });
     }
@@ -116,17 +116,17 @@ function deleteUserById(req, res) {
     // Check for errors
     if (err) {
       console.error(err);
-      res.status(500).json(util.format('%s', err));
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
     }
     // Send 404 if the resource is not found
     else if (result.affectedRows === 0) {
       console.log('Delete User: ', result);
-      res.status(404).json(util.format('%s', 'User Not Found'));
+      res.status(404).send(formatResponseMessage('User Not Found'));
     }
     // Success
     else {
       console.log('Delete User: ', result);
-      res.status(204).json(util.format('%s', 'User Deleted'));
+      res.status(204).send(formatResponseMessage('User Deleted'));
     }
   });
 }
@@ -143,12 +143,12 @@ function retrieveUserByLogin(req, res) {
     console.log(query.sql);
     if (err) {
       console.error(err);
-      res.status(500).json(util.format('%s', err));
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
     }
     // Send 401 if the resource is not found
     else if (result.length === 0){
       console.log('Invalid Login Credentials');
-      res.status(401).json(util.format('%s', 'Invalid Login Credentials'));
+      res.status(401).send(formatResponseMessage('Invalid Login Credentials'));
     }
     // Success
     else {
@@ -156,4 +156,10 @@ function retrieveUserByLogin(req, res) {
       res.send(result);
     }
   });
+}
+
+function formatResponseMessage(message) {
+  return {
+    "message": message
+  }
 }

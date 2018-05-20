@@ -33,7 +33,7 @@ function findTravelodes(req, res) {
     }
     else {
       console.error(err);
-      res.status(500).json(util.format('%s', err));
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
     }
   });
 }
@@ -51,11 +51,11 @@ function createTravelode(req, res) {
     console.log(query.sql);
     if (!err) {
       console.log('Travelode Created: ', result);
-      res.json({"message" : "Travelode Created"});
+      res.send(formatResponseMessage("Travelode Created"));
     }
     else {
       console.error(err);
-      res.status(500).json(util.format('%s', err));
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
     }
   });
 }
@@ -66,11 +66,11 @@ function getTravelodeById(req, res) {
     console.log(query.sql);
     if (err) {
       console.error(err);
-      res.status(500).json(util.format('%s', err));
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
     }
     else if (result.length === 0) {
       console.error('No Travelode Found');
-      res.status(404).json(util.format('%s', 'No Travelode Found'));
+      res.status(404).send(formatResponseMessage('No Travelode Found'));
     }
     else {
       console.log('Get Travelode By Id : ', result);
@@ -89,12 +89,12 @@ function updateTravelodeById(req, res) {
     // send error if there is error
     if (err) {
       console.error(err);
-      res.status(500).json(util.format('%s', err));
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
     }
     // send 404 if the resource was not found
     else if (result.length === 0) {
       console.log('Update Travelode: ', result);
-      res.status(404).json(util.format('%s', 'Travelode Not Found'));
+      res.status(404).send(formatResponseMessage('Travelode Not Found'));
     }
     // if resource is available, proceed with updates
     else {
@@ -102,11 +102,11 @@ function updateTravelodeById(req, res) {
         console.log(query2.sql);
         if (!err) {
           console.log('Update Travelode: ', result);
-          res.json(util.format('%s', 'Travelode Updated'));
+          res.send(formatResponseMessage('Travelode Updated'));
         }
         else {
           console.error(err);
-          res.status(500).json(util.format('%s', err));
+          res.status(500).send(formatResponseMessage(util.format('%s', err)));
         }
       });
     }
@@ -120,17 +120,23 @@ function deleteTravelodeById(req, res) {
     // Check for errors
     if (err) {
       console.error(err);
-      res.status(500).json(util.format('%s', err));
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
     }
     // Send 404 if the resource is not found
     else if (result.affectedRows === 0) {
       console.log('Delete Travelode: ', result);
-      res.status(404).json(util.format('%s', 'Travelode Not Found'));
+      res.status(404).send(formatResponseMessage('Travelode Not Found'));
     }
     // Success
     else {
       console.log('Delete Travelode: ', result);
-      res.status(204).json(util.format('%s', 'Travelode Deleted'));
+      res.status(204).send(formatResponseMessage('Travelode Deleted'));
     }
   });
+}
+
+function formatResponseMessage(message) {
+  return {
+    "message": message
+  }
 }

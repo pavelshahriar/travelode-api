@@ -19,6 +19,8 @@ tags:
     description: User APIs. Find and create user. Get, update, delete user by id. Get user by credentials.
   - name: Travelode
     description: Travelode APIs. Find and create travelode. Get, update, delete travelode by id.
+  - name: Media
+    description: Media APIs. Find and create media. Get, update, delete media by id.
 
 paths:
   /user:
@@ -144,8 +146,6 @@ paths:
             type: object
             properties:
               fullname:
-                type: string
-              photo:
                 type: string
       responses:
         "200":
@@ -396,6 +396,99 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  /media:
+    x-swagger-router-controller: media
+
+    get:
+      tags:
+        - Media
+      summary: Returns media list
+      operationId: findMedias
+      parameters:
+        - name: page
+          in: query
+          description: The page number to get. Default to 0.
+          required: false
+          type: string
+        - name: size
+          in: query
+          description: The size of the page to get. Default to 50.
+          required: false
+          type: string
+        - name: type
+          in: query
+          description: Find media by type (0=all, 1=photo, 2=video)
+          required: true
+          type: number
+          enum:
+            - 0
+            - 1
+            - 2
+          default: 0
+        - name: userId
+          in: query
+          description: Find by owner
+          required: false
+          type: number
+        - name: locationId
+          in: query
+          description: Find by location
+          required: false
+          type: number
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/MediaListResponse"
+        # responses may fall through to errors
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      tags:
+        - Media
+      summary: Uploads a media
+      operationId: createMedia
+      consumes:
+        - multipart/form-data
+        - application/x-www-form-urlencoded
+      produces:
+          - text/plain
+      parameters:
+        - in: formData
+          name: userId
+          required: true
+          type: number
+          description: The media owner
+        - in: formData
+          name: tripMedia
+          required: true
+          type: file
+          description: The media to upload
+        - in: formData
+          name: clouded
+          description: Parameter for media creation
+          type: boolean
+          enum:
+            - true
+            - false
+          default: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "404":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        # responses may fall through to errors
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
   /swagger:
     x-swagger-pipe: swagger_raw
 
@@ -477,8 +570,52 @@ definitions:
     required:
       - travelodes
     properties:
-      # The array of users
+      # The array of travelodes
       travelodes:
         type: array
         items:
           $ref: "#/definitions/Travelode"
+
+  Media:
+    type: object
+    properties:
+      id:
+        type: number
+        description: Media Id
+      type:
+        type: string
+        description: Type of the media (photo or video)
+      userId:
+        type: number
+        description: Media owner userId
+      uploaded:
+        description: Media uploading date time
+        type: string
+        format: date-time
+      updated:
+        description: Media update date time
+        type: string
+        format: date-time
+      created:
+        description: Media creation date time
+        type: string
+        format: date-time
+      sizeX:
+        type: number
+        description: Media size width in px
+      sizeY:
+        type: number
+        description: Media size height in px
+      url:
+        type: string
+        description: Url for the media
+
+  MediaListResponse:
+    required:
+      - medias
+    properties:
+      # The array of medias
+      medias:
+        type: array
+        items:
+          $ref: "#/definitions/Media"

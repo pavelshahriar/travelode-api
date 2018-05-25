@@ -15,6 +15,7 @@ const configs = {
   aws_access : process.env['AWS_ACCESS_KEY_ID'],
   aws_secret : process.env['AWS_SECRET_ACCESS_KEY'],
   aws_region : process.env['AWS_REGION'],
+  s3_bucket  : process.env['S3_BUCKET_NAME']
 };
 
 console.log('Configs :');

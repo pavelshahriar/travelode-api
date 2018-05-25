@@ -2,7 +2,7 @@
 
 const util = require('util');
 const db = require('../../db');
-const privacy = require('../../shared/privacyTranslator');
+const privacy = require('../helpers/privacyTranslator');
 privacy.getAllPrivacy();
 
 module.exports = {

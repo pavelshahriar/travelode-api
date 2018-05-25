@@ -31,15 +31,6 @@ CREATE TABLE `category` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `category`
---
-
-LOCK TABLES `category` WRITE;
-/*!40000 ALTER TABLE `category` DISABLE KEYS */;
-/*!40000 ALTER TABLE `category` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `location`
 --
 
@@ -55,17 +46,8 @@ CREATE TABLE `location` (
   `country` varchar(45) DEFAULT NULL,
   `continent` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `location`
---
-
-LOCK TABLES `location` WRITE;
-/*!40000 ALTER TABLE `location` DISABLE KEYS */;
-/*!40000 ALTER TABLE `location` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `media`
@@ -77,7 +59,7 @@ DROP TABLE IF EXISTS `media`;
 CREATE TABLE `media` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` int(11) NOT NULL,
-  `path` varchar(150) NOT NULL,
+  `filename` varchar(500) NOT NULL,
   `userId` int(11) NOT NULL,
   `uploaded` datetime NOT NULL,
   `updated` datetime DEFAULT NULL,
@@ -85,24 +67,16 @@ CREATE TABLE `media` (
   `created` datetime NOT NULL,
   `sizeX` varchar(45) DEFAULT NULL,
   `sizeY` varchar(45) DEFAULT NULL,
+  `storage` varchar(45) NOT NULL DEFAULT 'disk',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `path_UNIQUE` (`path`),
+  UNIQUE KEY `path_UNIQUE` (`filename`),
   KEY `type` (`type`),
   KEY `mediaUserId_idx` (`userId`),
   KEY `mediaLocationId_idx` (`locationId`),
   CONSTRAINT `mediaLocationId` FOREIGN KEY (`locationId`) REFERENCES `location` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `mediaUserId` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `media`
---
-
-LOCK TABLES `media` WRITE;
-/*!40000 ALTER TABLE `media` DISABLE KEYS */;
-/*!40000 ALTER TABLE `media` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `privacy`
@@ -118,16 +92,6 @@ CREATE TABLE `privacy` (
   UNIQUE KEY `type_UNIQUE` (`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `privacy`
---
-
-LOCK TABLES `privacy` WRITE;
-/*!40000 ALTER TABLE `privacy` DISABLE KEYS */;
-INSERT INTO `privacy` VALUES (2,'friends'),(1,'private'),(3,'public');
-/*!40000 ALTER TABLE `privacy` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `travelode`
@@ -150,17 +114,8 @@ CREATE TABLE `travelode` (
   KEY `travelodePrivacyId_idx` (`privacy`),
   CONSTRAINT `travelodePrivacyId` FOREIGN KEY (`privacy`) REFERENCES `privacy` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `travelodeUserId` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `travelode`
---
-
-LOCK TABLES `travelode` WRITE;
-/*!40000 ALTER TABLE `travelode` DISABLE KEYS */;
-/*!40000 ALTER TABLE `travelode` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `travelode_media`
@@ -195,15 +150,6 @@ CREATE TABLE `travelode_media` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `travelode_media`
---
-
-LOCK TABLES `travelode_media` WRITE;
-/*!40000 ALTER TABLE `travelode_media` DISABLE KEYS */;
-/*!40000 ALTER TABLE `travelode_media` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `travelode_media_category`
 --
 
@@ -226,15 +172,6 @@ CREATE TABLE `travelode_media_category` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `travelode_media_category`
---
-
-LOCK TABLES `travelode_media_category` WRITE;
-/*!40000 ALTER TABLE `travelode_media_category` DISABLE KEYS */;
-/*!40000 ALTER TABLE `travelode_media_category` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `user`
 --
 
@@ -254,16 +191,6 @@ CREATE TABLE `user` (
   UNIQUE KEY `email_UNIQUE` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `user`
---
-
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'pavel@travelode.com','MED@B0$$','Pavel Shahriar',NULL,'2018-04-20 23:31:37','2018-04-21 04:01:48'),(2,'mush@travelode.com','mush123',NULL,NULL,'2018-04-20 23:35:55',NULL),(3,'sajid@travelode.com','mush123',NULL,NULL,'2018-04-20 23:36:29',NULL);
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -274,4 +201,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-21 14:20:21
+-- Dump completed on 2018-05-25  1:02:24

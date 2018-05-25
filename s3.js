@@ -12,41 +12,52 @@ const S3 = new AWS.S3(awsConfig({
 }));
 
 class s3Opt {
-  isBucketPresent(bucketName) {
+  isBucketPresent(bucketName, callback) {
     S3.listBuckets({}, function(err, data){
       if (err) {
-        console.log(err);
+        // console.log(err);
+        callback(err, null);
       } else {
         const foundBucket = data.Buckets.find(el => {
            return (el.Name === bucketName);
         });
-        if (foundBucket) {
-          console.log("Bucket - " + bucketName + " is already present");
-        } else {
-          console.log("Bucket does not exist. Go ahead and create it");
-        }
+        // if (foundBucket) {
+        //   console.log("Bucket - " + bucketName + " is already present");
+        // } else {
+        //   console.log("Bucket does not exist. Go ahead and create it");
+        // }
+        callback(null, foundBucket);
       }
     });
   }
 
-  createBucket(bucketName) {
+  createBucket(bucketName, callback) {
     S3.createBucket({Bucket: bucketName}, function(err, data) {
       if (err) {
-        console.log(err);
+        // console.log(err);
+        callback(err);
       } else {
-        console.log("Successfully creted bucket : " + bucketName);
+        // console.log("Successfully creted bucket : " + bucketName);
+        callback();
       }
     });
   }
 
-  uploadImage(bucketName, fileName, filePath) {
+  uploadImage(bucketName, fileName, filePath, callback) {
     fs.readFile(filePath, function(err, fileBuffer){
-      const params = {Bucket: bucketName, Key: fileName, Body: fileBuffer};
+      const params = {
+        Bucket: bucketName,
+        Key: fileName,
+        Body: fileBuffer,
+        ACL: 'public-read'
+      };
       S3.putObject(params, function(err, data) {
         if (err) {
-          console.log(err)
+          // console.log(err)
+          callback(err);
         } else {
-          console.log("Successfully uploaded image - " + fileName +" to the bucket - " + bucketName);
+          // console.log("Successfully uploaded image - " + fileName +" to the bucket - " + bucketName);
+          callback();
         }
       });
     });
@@ -65,8 +76,3 @@ class s3Opt {
 }
 
 module.exports = new s3Opt();
-
-// isBucketPresent(bucketName);
-// createBucket(bucketName);
-// uploadImage(bucketName, 'my-travelode-photo.jpg', 'uploads/blankwhite.jpg');
-// retrieveImage(bucketName, 'my-travelode-photo.jpg')

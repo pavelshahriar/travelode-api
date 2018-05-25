@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const util = require('util');
-const db = require('../db');
+const db = require('../../db');
 
 const tableNamePrivacy = 'privacy';
 const selectPrivacyItems = 'id, type';

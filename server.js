@@ -7,13 +7,51 @@ const port = process.env.PORT || config.port; // Important for Heroku
 const express = require('express');
 const swaggerTools = require('swagger-tools');
 const yaml = require('yamljs');
-
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const crypto = require('crypto');
+const path = require('path');
 const s3 = require('./s3.js');
-s3.isBucketPresent('travelode.media.' + config.env);
 
 // Init Server
 const server = express();
-module.exports = server; // for testing
+
+// Body Parser
+server.use(bodyParser.json());
+
+// Init Multer and upload file with name tripMedia
+const storage = multer.diskStorage({
+  destination: './uploads/',
+  filename: function (req, file, cb) {
+    crypto.pseudoRandomBytes(16, function (err, raw) {
+      if (err) return cb(err)
+
+      cb(null, raw.toString('hex') + path.extname(file.originalname))
+    })
+  }
+})
+const upload = multer({ storage: storage });
+server.use(upload.fields([{name: "tripMedia"}]));
+
+ // Init AWS S3
+const bucketName = config.s3_bucket + '.' + config.env;
+s3.isBucketPresent(bucketName, function (err, foundBucket){
+  if (err) {
+    console.log(err);
+  } else {
+    if (typeof foundBucket == "undefined" ) {
+      s3.createBucket(bucketName, function(err) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log('New bucket created with name : ' + bucketName);
+        }
+      })
+    } else {
+      console.log("Bucket - " + bucketName + " is already present");
+    }
+  }
+})
 
 // Init Swagger UI
 const swaggerDoc = yaml.load(config.appRoot + '/api/swagger/swagger.yaml');

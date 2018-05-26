@@ -7,16 +7,19 @@ const fs = require('fs');
 const db = require('../../db');
 const s3 = require('../../s3');
 const config = require('../../config');
+const mediaUrlTransformer = require('../helpers/mediaUrlTransformer');
+const bucketNameTransformer = require('../helpers/bucketNameTransformer');
 const userService = require('../services/userService');
 
 module.exports = {
   findMedias: findMedias,
-  createMedia: createMedia
+  createMedia: createMedia,
+  getMediaById: getMediaById
 };
 
 const tableNameMedia = 'media';
 const selectMediaItems = 'id, type, filename, userId, uploaded, updated, locationId, created, sizeX, sizeY, storage';
-const bucketName = config.s3_bucket + '.' + config.env;
+const bucketName = bucketNameTransformer();
 
 function findMedias(req, res) {
   const page = req.swagger.params.page.value || 0;
@@ -52,7 +55,7 @@ function findMedias(req, res) {
     if (!err) {
       console.log('Find Media: ', result);
       result.forEach(el => {
-        el['url'] = getMediaUrl(el.filename, el.storage);
+        el['url'] = mediaUrlTransformer.mediaBasePathUrl[el.storage] + el.filename;
         delete el.filename;
         delete el.storage;
       });
@@ -101,7 +104,7 @@ function createMedia(req, res) {
         created: new Date().toISOString().slice(0, 19).replace('T', ' '),
         sizeX: 0,
         sizeY: 0,
-        storage: 'disk'
+        storage: (clouded) ? 's3' : 'disk'
       };
       const query = db.query('INSERT INTO ' + tableNameMedia + ' SET ?', media_data, function(err, result) {
         console.log(query.sql);
@@ -146,6 +149,31 @@ function createMedia(req, res) {
   // res.send();
 }
 
+function getMediaById(req, res) {
+  const id = req.swagger.params.id.value;
+  const query = db.query('SELECT '+ selectMediaItems +' FROM ' + tableNameMedia + ' WHERE id = ? LIMIT 0, 1', id, function(err, result) {
+    console.log(query.sql);
+    if (err) {
+      console.error(err);
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
+    }
+    else if (result.length === 0) {
+      console.error('No Media Found');
+      res.status(404).send(formatResponseMessage('No Media Found'));
+    }
+    else {
+      console.log('Get Media By Id : ', result);
+      result.forEach(el => {
+        el['url'] = mediaUrlTransformer.mediaBasePathUrl[el.storage] + el.filename;
+        delete el.filename;
+        delete el.storage;
+      });
+      res.send(result);
+    }
+  });
+
+}
+
 function getMediaType(mimetype) {
   let mediaType;
   switch (mimetype) {
@@ -168,18 +196,6 @@ function removeMediaFromServer(tripMedia, callback) {
         callback(true);
     }
   });
-}
-
-function getMediaUrl(filename, storage) {
-  let url = '';
-  switch (storage) {
-    case 's3':
-      url = 'https://s3.amazonaws.com/' + bucketName +'/' + filename;
-      break;
-    default:
-      url = 'http://localhost:28252/uploads/' + filename;
-  }
-  return url;
 }
 
 function formatResponseMessage(message) {

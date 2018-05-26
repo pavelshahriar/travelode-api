@@ -12,9 +12,14 @@ const multer = require('multer');
 const crypto = require('crypto');
 const path = require('path');
 const s3 = require('./s3.js');
+const bucketNameTransformer = require('./api/helpers/bucketNameTransformer');
 
 // Init Server
 const server = express();
+
+// Static asset serving
+// server.use(express.static('uploads'));
+server.use('/cdn/user/media', express.static(path.join(__dirname, 'uploads')))
 
 // Body Parser
 server.use(bodyParser.json());
@@ -34,7 +39,8 @@ const upload = multer({ storage: storage });
 server.use(upload.fields([{name: "tripMedia"}]));
 
  // Init AWS S3
-const bucketName = config.s3_bucket + '.' + config.env;
+const bucketName = bucketNameTransformer();
+console.log(bucketName);
 s3.isBucketPresent(bucketName, function (err, foundBucket){
   if (err) {
     console.log(err);
@@ -71,6 +77,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   // install middleware
   swaggerExpress.register(server);
   server.listen(port);
+
 });
 
 server.get('/', function (req,res) {

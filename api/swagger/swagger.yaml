@@ -445,6 +445,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+
     post:
       tags:
         - Media
@@ -484,6 +485,35 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
         # responses may fall through to errors
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /media/{id}:
+    x-swagger-router-controller: media
+    
+    get:
+      tags:
+        - Media
+      summary: Returns a single media
+      operationId: getMediaById
+      parameters:
+        - name: id
+          in: path
+          description: The Media Id
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/MediaListResponse"
+        "404":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "500":
           description: Error
           schema:

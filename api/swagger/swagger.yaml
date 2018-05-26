@@ -473,7 +473,6 @@ paths:
           type: boolean
           enum:
             - true
-            - false
           default: true
       responses:
         "200":
@@ -492,7 +491,7 @@ paths:
 
   /media/{id}:
     x-swagger-router-controller: media
-    
+
     get:
       tags:
         - Media

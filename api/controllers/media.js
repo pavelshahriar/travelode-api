@@ -225,10 +225,10 @@ function updateMediaById(req, res) {
 function deleteMediaById(req, res) {
   const id = req.swagger.params.id.value;
 
-  mediaService.isMediaValid(id, function (err, found) {
+  mediaService.getOneMediaById(id, function (err, media) {
     if (err) {
       res.status(500).send(formatResponseMessage(util.format('%s', err)));
-    } else if (!found){
+    } else if (typeof media == 'undefined'){
       console.log('Media Not Found !');
       res.status(404).send(formatResponseMessage('Media not found'));
     } else {

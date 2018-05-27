@@ -2,13 +2,13 @@
 
 const db = require('../../db');
 
-class userService {
+class travelodeService {
   constructor(tableName, selectItems) {
     this.tableName = tableName;
     this.selectItems = selectItems;
   }
 
-  isUserValid(id, callback) {
+  isTravelodeValid(id, callback) {
     const query = db.query('SELECT '+ this.selectItems +' FROM ' + this.tableName + ' WHERE id = ?',
     [id],
     function(err, result) {
@@ -24,4 +24,4 @@ class userService {
   }
 }
 
-module.exports = new userService('user', 'id, email, fullname, photo, created, updated');
+module.exports = new travelodeService('travelode', 'id, title, description, userId, created, updated, coverId');

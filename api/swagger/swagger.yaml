@@ -507,6 +507,51 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+    put:
+      tags:
+        - Media
+      summary: Update a media
+      operationId: updateMediaById
+      parameters:
+        - name: id
+          in: path
+          description: The media id to update
+          required: true
+          type: integer
+          minimum: 1
+        - name: mediaData
+          in: body
+          description: The media data to update
+          required: true
+          schema:
+            type: object
+            properties:
+              userId:
+                type: number
+              locationId:
+                type: number
+              sizeX:
+                type: number
+              sizeY:
+                type: number
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        "400":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "404":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
     delete:
       tags:
         - Media

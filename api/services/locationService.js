@@ -2,13 +2,13 @@
 
 const db = require('../../db');
 
-class userService {
+class locationService {
   constructor(tableName, selectItems) {
     this.tableName = tableName;
     this.selectItems = selectItems;
   }
 
-  isUserValid(id, callback) {
+  isLocationValid(id, callback) {
     const query = db.query('SELECT '+ this.selectItems +' FROM ' + this.tableName + ' WHERE id = ?',
     [id],
     function(err, result) {
@@ -24,4 +24,4 @@ class userService {
   }
 }
 
-module.exports = new userService('user', 'id, email, fullname, photo, created, updated');
+module.exports = new locationService('location', 'id, name, magnitude, lattitude, city, country, continent');

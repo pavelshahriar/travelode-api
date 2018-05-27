@@ -3,6 +3,7 @@
 const util = require('util');
 const db = require('../../db');
 const privacy = require('../helpers/privacyTranslator');
+
 privacy.getAllPrivacy();
 
 module.exports = {
@@ -84,22 +85,16 @@ function updateTravelodeById(req, res) {
   const travelode_data =  req.swagger.params.travelodeData.value;
   travelode_data['updated'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-  const query1 = db.query('SELECT ' + selectTravelodeItems + ' FROM ' + tableNameTravelode + ' WHERE id = ?', id, function (err, result) {
-    console.log(query1.sql);
-    // send error if there is error
+  travelodeService.isTravelodeValid(id, function (err, found) {
     if (err) {
-      console.error(err);
       res.status(500).send(formatResponseMessage(util.format('%s', err)));
-    }
-    // send 404 if the resource was not found
-    else if (result.length === 0) {
-      console.log('Update Travelode: ', result);
-      res.status(404).send(formatResponseMessage('Travelode Not Found'));
-    }
-    // if resource is available, proceed with updates
-    else {
-      const query2 = db.query('UPDATE ' + tableNameTravelode + ' SET ? WHERE id = ?', [travelode_data, id], function(err, result) {
-        console.log(query2.sql);
+    } else if (!found) {
+      console.log('Travelode Not Found !');
+      res.status(404).send(formatResponseMessage('Travelode not found'));
+    } else {
+
+      const query = db.query('UPDATE ' + tableNameTravelode + ' SET ? WHERE id = ?', [travelode_data, id], function(err, result) {
+        console.log(query.sql);
         if (!err) {
           console.log('Update Travelode: ', result);
           res.send(formatResponseMessage('Travelode Updated'));
@@ -138,5 +133,5 @@ function deleteTravelodeById(req, res) {
 function formatResponseMessage(message) {
   return {
     "message": message
-  }
+  };
 }

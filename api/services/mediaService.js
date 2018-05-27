@@ -3,13 +3,13 @@
 const db = require('../../db');
 
 class mediaService {
-  constructor(tableName, selectMediaItems) {
-    this.tableNameMedia = tableName;
-    this.selectMediaItems = selectMediaItems;
+  constructor(tableName, selectItems) {
+    this.tableName = tableName;
+    this.selectItems = selectItems;
   }
 
-  getMediaById(id, callback) {
-    const query = db.query('SELECT '+ this.selectMediaItems +' FROM ' + this.tableNameMedia + ' WHERE id = ?',
+  isMediaValid(id, callback) {
+    const query = db.query('SELECT '+ this.selectItems +' FROM ' + this.tableName + ' WHERE id = ?',
     [id],
     function(err, result) {
       console.log(query.sql);
@@ -17,7 +17,9 @@ class mediaService {
         console.error(err);
         callback(err, null);
       }
-      callback(null, result[0]);
+
+      let found = (result.length !== 0) ? true : false;
+      callback(null, found);
     });
   }
 }

@@ -11,11 +11,13 @@ const mediaUrlTransformer = require('../helpers/mediaUrlTransformer');
 const bucketNameTransformer = require('../helpers/bucketNameTransformer');
 const userService = require('../services/userService');
 const mediaService = require('../services/mediaService');
+const locationService = require('../services/locationService');
 
 module.exports = {
   findMedias: findMedias,
   createMedia: createMedia,
   getMediaById: getMediaById,
+  updateMediaById: updateMediaById,
   deleteMediaById: deleteMediaById
 };
 
@@ -170,13 +172,63 @@ function getMediaById(req, res) {
   });
 }
 
+function updateMediaById(req, res) {
+  const id = req.swagger.params.id.value;
+  const media_data =  req.swagger.params.mediaData.value;
+  media_data['updated'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+  mediaService.isMediaValid(id, function (err, found) {
+    if (err) {
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
+    } else if (!found){
+      console.log('Media Not Found !');
+      res.status(404).send(formatResponseMessage('Media not found'));
+    } else {
+
+      userService.isUserValid(media_data.userId, function (err, found) {
+        if (err) {
+          console.log(err);
+          res.status(500).send(formatResponseMessage(util.format('%s', err)));
+        } else if (!found) {
+          console.log('Invalid User Id');
+          res.status(400).send(formatResponseMessage('Invalid User Id'));
+        } else {
+
+          locationService.isLocationValid(media_data.locationId, function (err, found) {
+            if (err) {
+              console.log(err);
+              res.status(500).send();
+            } else if (!found) {
+              console.log('Invalid Localtion Id');
+              res.status(400).send(formatResponseMessage('Invalid Location Id'));
+            } else {
+
+              const query = db.query('UPDATE ' + tableNameMedia + ' SET ? WHERE id = ?', [media_data, id], function(err, result) {
+                console.log(query.sql);
+                if (!err) {
+                  console.log('Update Media: ', result);
+                  res.send(formatResponseMessage('Media Updated'));
+                }
+                else {
+                  console.error(err);
+                  res.status(500).send(formatResponseMessage(util.format('%s', err)));
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+}
+
 function deleteMediaById(req, res) {
   const id = req.swagger.params.id.value;
 
-  mediaService.getMediaById(id, function (err, media) {
+  mediaService.isMediaValid(id, function (err, found) {
     if (err) {
       res.status(500).send(formatResponseMessage(util.format('%s', err)));
-    } else if (typeof media == 'undefined'){
+    } else if (!found){
       console.log('Media Not Found !');
       res.status(404).send(formatResponseMessage('Media not found'));
     } else {

@@ -10,11 +10,13 @@ const config = require('../../config');
 const mediaUrlTransformer = require('../helpers/mediaUrlTransformer');
 const bucketNameTransformer = require('../helpers/bucketNameTransformer');
 const userService = require('../services/userService');
+const mediaService = require('../services/mediaService');
 
 module.exports = {
   findMedias: findMedias,
   createMedia: createMedia,
-  getMediaById: getMediaById
+  getMediaById: getMediaById,
+  deleteMediaById: deleteMediaById
 };
 
 const tableNameMedia = 'media';
@@ -71,7 +73,7 @@ function findMedias(req, res) {
 function createMedia(req, res) {
   const userId = req.swagger.params.userId.value;
   const tripMedia = req.swagger.params.tripMedia.value;
-  const clouded =  req.swagger.params.clouded.value;
+  const clouded =  true; //req.swagger.params.clouded.value;
 
   // 0. The image is already saved in the server coming here because of multer middleware
   console.log(tripMedia);
@@ -80,7 +82,7 @@ function createMedia(req, res) {
   userService.isUserValid(userId, function (err, found) {
     if (err) {
       console.error(err); // error in getting the user
-      removeMediaFromServer(tripMedia, function (removed) {
+      removeMediaFromServer(tripMedia.filename, function (removed) {
         if (!removed) {
           console.error('The file : ' + tripMedia.filename + ' was not removed.');
         }
@@ -88,7 +90,7 @@ function createMedia(req, res) {
       });
     } else if (!found){
       console.log('User Not Found !');
-      removeMediaFromServer(tripMedia, function (removed) {
+      removeMediaFromServer(tripMedia.filename, function (removed) {
         if (!removed) {
           console.error('The file : ' + tripMedia.filename + ' was not removed.');
         }
@@ -124,14 +126,12 @@ function createMedia(req, res) {
                 console.log("Successfully uploaded image - " + tripMedia.filename +" to the bucket - " + bucketName);
 
                 // 4. Remove the file from server
-                fs.unlink(tripMedia.path, function(error) {
-                  if (error) {
-                    console.error(err);
-                    res.status(500).send(formatResponseMessage(util.format('%s', err)));
-                  } else {
-                      console.log(tripMedia.filename + ' is deleted from the server');
-                      res.send(formatResponseMessage("Media Created and Uploaded to Cloud"));
+                removeMediaFromServer(tripMedia.filename, function (removed) {
+                  if (!removed) {
+                    console.error('The file : ' + tripMedia.filename + ' was not removed.');
                   }
+                  console.log(tripMedia.filename + ' is deleted from the server');
+                  res.send(formatResponseMessage("Media Created and Uploaded to Cloud"));
                 });
               }
             });
@@ -144,9 +144,6 @@ function createMedia(req, res) {
       });
     }
   });
-
-  // 2. Database operations
-  // res.send();
 }
 
 function getMediaById(req, res) {
@@ -171,7 +168,62 @@ function getMediaById(req, res) {
       res.send(result);
     }
   });
+}
 
+function deleteMediaById(req, res) {
+  const id = req.swagger.params.id.value;
+
+  mediaService.getMediaById(id, function (err, media) {
+    if (err) {
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
+    } else if (typeof media == 'undefined'){
+      console.log('Media Not Found !');
+      res.status(404).send(formatResponseMessage('Media not found'));
+    } else {
+      const currentMedia = media;
+      const query = db.query('DELETE FROM ' + tableNameMedia + ' WHERE id = ?', id, function(err, result) {
+        console.log(query.sql);
+        // Check for errors
+        if (err) {
+          console.error(err);
+          res.status(500).send(formatResponseMessage(util.format('%s', err)));
+        }
+        // Send 404 if the resource is not found
+        else if (result.affectedRows === 0) {
+          console.log('Delete Media: ', result);
+          res.status(404).send(formatResponseMessage('Media Not Found'));
+        }
+        // Success
+        else {
+          console.log('Delete Media: ', result);
+          const currentMediaStorage = currentMedia.storage;
+
+          if (currentMediaStorage === 'disk') {
+            removeMediaFromServer(currentMedia.filename, function (removed) {
+              if (!removed) {
+                console.error('The file : ' + currentMedia.filename + ' was not removed.');
+              } else {
+                console.error('The file : ' + currentMedia.filename + ' was remove from ' + currentMediaStorage);
+                res.status(204).send(formatResponseMessage('Media Deleted and removed from ' + currentMediaStorage));
+              }
+            });
+          } else if (currentMediaStorage === 's3') {
+            s3.deleteImage(bucketName, currentMedia.filename, function(err) {
+              if (err) {
+                console.error(err);
+                res.status(500).send(util.format('%s', err));
+              } else {
+                console.error('The file : ' + currentMedia.filename + ' was remove from ' + currentMediaStorage);
+                res.status(204).send(formatResponseMessage('Media Deleted and remove from ' + currentMediaStorage));
+              }
+            })
+          } else {
+            res.status(204);
+          }
+        }
+      });
+    }
+  });
 }
 
 function getMediaType(mimetype) {
@@ -186,14 +238,14 @@ function getMediaType(mimetype) {
   return mediaType;
 }
 
-function removeMediaFromServer(tripMedia, callback) {
-  fs.unlink(tripMedia.path, function(error) {
+function removeMediaFromServer(file, callback) {
+  fs.unlink('uploads/' + file, function(error) {
     if (error) {
       console.error(err);
       callback(false);
     } else {
-        console.log(tripMedia.filename + ' is deleted from the server');
-        callback(true);
+      console.log(file + ' is deleted from the server');
+      callback(true);
     }
   });
 }

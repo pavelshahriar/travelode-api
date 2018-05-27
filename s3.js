@@ -21,11 +21,6 @@ class s3Opt {
         const foundBucket = data.Buckets.find(el => {
            return (el.Name === bucketName);
         });
-        // if (foundBucket) {
-        //   console.log("Bucket - " + bucketName + " is already present");
-        // } else {
-        //   console.log("Bucket does not exist. Go ahead and create it");
-        // }
         callback(null, foundBucket);
       }
     });
@@ -63,15 +58,28 @@ class s3Opt {
     });
   }
 
-  retrieveImage(bucketName, fileName) {
+  retrieveImage(bucketName, fileName, callback) {
     const params = {Bucket: bucketName, Key: fileName};
     S3.getSignedUrl('getObject', params, function(err, url){
       if (err) {
-        console.log(err);
+        callback(err)
+        // console.log(err);
       } else {
-        console.log('The url of the image is : ', url);
+        // console.log('The url of the image is : ', url);
+        callback();
       }
     })
+  }
+
+  deleteImage(bucketName, fileName, callback) {
+    const params = {Bucket: bucketName, Key: fileName};
+    S3.deleteObject(params, function(err, url) {
+      if (err) {
+        callback(err)
+      } else {
+        callback();
+      }
+    });
   }
 }
 

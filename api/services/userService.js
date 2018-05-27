@@ -3,8 +3,8 @@
 const db = require('../../db');
 
 class userService {
-  constructor(user, selectUserItems) {
-    this.tableNameUser = user;
+  constructor(tableName, selectUserItems) {
+    this.tableNameUser = tableName;
     this.selectUserItems = selectUserItems;
   }
 

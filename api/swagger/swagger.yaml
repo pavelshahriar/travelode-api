@@ -175,9 +175,7 @@ paths:
           minimum: 1
       responses:
         "204":
-          description: Success
-          schema:
-            $ref: "#/definitions/SuccessResponse"
+          description: User is removed
         "404":
           description: Error
           schema:
@@ -384,9 +382,7 @@ paths:
           minimum: 1
       responses:
         "204":
-          description: Success
-          schema:
-            $ref: "#/definitions/SuccessResponse"
+          description: Travelode is removed
         "404":
           description: Error
           schema:
@@ -467,13 +463,6 @@ paths:
           required: true
           type: file
           description: The media to upload
-        - in: formData
-          name: clouded
-          description: Parameter for media creation
-          type: boolean
-          enum:
-            - true
-          default: true
       responses:
         "200":
           description: Success
@@ -509,6 +498,30 @@ paths:
           description: Success
           schema:
             $ref: "#/definitions/MediaListResponse"
+        "404":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - Media
+      summary: Delete a media
+      operationId: deleteMediaById
+      parameters:
+        - name: id
+          in: path
+          description: The media id to delete
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        "204":
+          description: Media is removed
         "404":
           description: Error
           schema:

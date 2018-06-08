@@ -21,6 +21,8 @@ tags:
     description: Travelode APIs. Find and create travelode. Get, update, delete travelode by id.
   - name: Media
     description: Media APIs. Find and create media. Get, update, delete media by id.
+  - name: Travelode Media
+    description: Travelode-Media APIs. Find and assign media to travelodes. Get, update, delete travelode-media by id.
 
 paths:
   /user:
@@ -392,6 +394,95 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  /travelode/{id}/media:
+    x-swagger-router-controller: travelode_media
+
+    get:
+      tags:
+        - Travelode
+      summary: Returns media list of a travelode
+      operationId: findMediasByTravelode
+      parameters:
+        - name: id
+          in: path
+          description: The Travelode Id
+          required: true
+          type: integer
+          minimum: 1
+        - name: page
+          in: query
+          description: The page number to get. Default to 0.
+          required: false
+          type: string
+        - name: size
+          in: query
+          description: The size of the page to get. Default to 50.
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/MediaListResponse"
+        # responses may fall through to errors
+        "404":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    post:
+      tags:
+        - Travelode
+      summary: Add a media to a travelode
+      operationId: addMediaToTravelode
+      consumes:
+        - multipart/form-data
+      produces:
+          - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The Travelode Id
+          required: true
+          type: integer
+          minimum: 1
+        - name: mediaId
+          in: formData
+          description: The media id which will be added for the travelode
+          required: true
+          type: integer
+          minimum: 1
+        - in: formData
+          name: title
+          description: Title of the Travelode Media
+          required: true
+          type: string
+        - in: formData
+          name: caption
+          description: Caption of the Travelode Media
+          required: false
+          type: string
+        - in: formData
+          name: displayDate
+          description: Display date of the travelode media. Correct Format - `mm/dd/yyy`
+          required: false
+          type: string
+          format: date-time
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        # responses may fall through to errors
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
   /media:
     x-swagger-router-controller: media
 
@@ -576,6 +667,308 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  /media/{id}/travelode:
+    x-swagger-router-controller: travelode_media
+
+    get:
+      tags:
+        - Media
+      summary: Returns list of travelodes which have this media
+      operationId: findTravelodeByMedia
+      parameters:
+        - name: id
+          in: path
+          description: The Media Id
+          required: true
+          type: integer
+          minimum: 1
+        - name: page
+          in: query
+          description: The page number to get. Default to 0.
+          required: false
+          type: string
+        - name: size
+          in: query
+          description: The size of the page to get. Default to 50.
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/TravelodeListResponse"
+        # responses may fall through to errors
+        "404":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    post:
+      tags:
+        - Media
+      summary: Add this media to a travelode
+      operationId: addTravelodeForMedia
+      consumes:
+        - multipart/form-data
+      produces:
+          - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The Media Id
+          required: true
+          type: integer
+          minimum: 1
+        - name: travelodeId
+          in: formData
+          description: The travelode id which will have this media
+          required: true
+          type: integer
+          minimum: 1
+        - in: formData
+          name: title
+          description: Title of the Travelode Media
+          required: true
+          type: string
+        - in: formData
+          name: caption
+          description: Caption of the Travelode Media
+          required: false
+          type: string
+        - in: formData
+          name: displayDate
+          description: Display date of the travelode media. Correct format - `mm/dd/yyyy`
+          required: false
+          type: string
+          format: date-time
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        # responses may fall through to errors
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /travelode/media:
+    x-swagger-router-controller: travelode_media
+
+    get:
+      tags:
+        - Travelode Media
+      summary: Returns list of a travelode-media
+      operationId: findTravelodeMedias
+      parameters:
+        - name: travelodeId
+          in: query
+          description: The Travelode Id
+          required: false
+          type: integer
+          minimum: 1
+        - name: mediaId
+          in: query
+          description: The Media Id
+          required: false
+          type: integer
+          minimum: 1
+        - name: page
+          in: query
+          description: The page number to get. Default to 0.
+          required: false
+          type: string
+        - name: size
+          in: query
+          description: The size of the page to get. Default to 50.
+          required: false
+          type: string
+        - name: title
+          in: query
+          description: Find by travelode media title
+          required: false
+          type: string
+        - name: displayDate
+          in: query
+          description: Find by travelode media date. Correct format - `mm/dd/yyyy`
+          required: false
+          type: string
+          format: date-time
+        - name: location
+          in: query
+          description: Find by travelode media location
+          required: false
+          type: number
+          minimum: 1
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/TravelodeMediaListResponse"
+        # responses may fall through to errors
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    post:
+      tags:
+        - Travelode Media
+      summary: Add a travelode-media
+      operationId: addTravelodeMedia
+      consumes:
+        - multipart/form-data
+      produces:
+          - application/json
+      parameters:
+        - name: travelodeId
+          in: formData
+          description: The travelode id for which the media will be added
+          required: true
+          type: integer
+          minimum: 1
+        - name: mediaId
+          in: formData
+          description: The media id which will be added for the travelode
+          required: true
+          type: integer
+          minimum: 1
+        - in: formData
+          name: title
+          description: Title of the Travelode Media
+          required: true
+          type: string
+        - in: formData
+          name: caption
+          description: Caption of the Travelode Media
+          required: false
+          type: string
+        - in: formData
+          name: displayDate
+          description: Display date of the travelode media
+          required: false
+          type: string
+          format: date-time
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        # responses may fall through to errors
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /travelode/media/{id}:
+    x-swagger-router-controller: travelode_media
+
+    get:
+      tags:
+        - Travelode Media
+      summary: Returns a single travelode-media details
+      operationId: getTravelodeMediaById
+      parameters:
+        - name: id
+          in: path
+          description: The travelode-media Id
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/TravelodeMediaListResponse"
+        "404":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    put:
+      tags:
+        - Travelode Media
+      summary: Updates a travelode-media details
+      operationId: updateTravelodeMediaById
+      parameters:
+        - name: id
+          in: path
+          description: The travelode-media Id
+          required: true
+          type: integer
+          minimum: 1
+        - name: travelodeMediaData
+          in: body
+          description: The travelode media data to update
+          required: true
+          schema:
+            type: object
+            properties:
+              rollNo:
+                type: integer
+              privacy:
+                type: integer
+              title:
+                type: string
+              caption:
+                type: string
+              displayDate:
+                type: string
+                format: date-time
+              displayLocationId:
+                type: integer
+              isCover:
+                type: boolean
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        "400":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "404":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - Travelode Media
+      summary: Delete a travelode-media
+      operationId: deleteTravelodeMediaById
+      parameters:
+        - name: id
+          in: path
+          description: The travelode-media Id
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        "204":
+          description: Travelode Media is removed
+        "404":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
   /swagger:
     x-swagger-pipe: swagger_raw
 
@@ -706,3 +1099,53 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Media"
+
+  TravelodeMedia:
+    type: object
+    properties:
+      id:
+        type: number
+        description: Travelode Media Id
+      travelodeId:
+        type: number
+        description: Travelode Id
+      mediaId:
+        type: number
+        description: Media Id
+      rollNo:
+        type: number
+        description: Roll of this media in the travelode
+      privacy:
+        type: number
+        description: Privacy of the media in the travelode
+      title:
+        type: string
+        description: Title of the media in the travelode
+      caption:
+        type: string
+        description: Caption of the media in the travelode
+      displayDate:
+        description: The date to be displayed in the travelode
+        type: string
+        format: date-time
+      displayLocationId:
+        description: Id of the location to be displayed in the travelode
+        type: string
+        format: date-time
+      created:
+        description: Date of creating the travelode-media
+        type: string
+        format: date-time
+      isCover:
+        type: boolean
+        description: Is this the cover for the travelode or not
+
+  TravelodeMediaListResponse:
+    required:
+      - travelodeMedias
+    properties:
+      # The array of medias
+      travelodeMedias:
+        type: array
+        items:
+          $ref: "#/definitions/TravelodeMedia"

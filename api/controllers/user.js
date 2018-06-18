@@ -2,6 +2,7 @@
 
 const util = require('util');
 const db = require('../../db');
+const formatResponseMessage = require('../helpers/formatResponseMessage');
 
 module.exports = {
   findUsers: findUsers,
@@ -47,7 +48,7 @@ function createUser(req, res) {
     console.log(query.sql);
     if (!err) {
       console.log('User Created: ', result);
-      res.send(formatResponseMessage("User Created"));
+      res.status(201).send(formatResponseMessage("User Created", result.insertId));
     }
     else {
       console.error(err);
@@ -156,10 +157,4 @@ function retrieveUserByLogin(req, res) {
       res.send(result);
     }
   });
-}
-
-function formatResponseMessage(message) {
-  return {
-    "message": message
-  }
 }

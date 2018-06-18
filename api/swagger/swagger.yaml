@@ -89,10 +89,10 @@ paths:
           type: string
           format: password
       responses:
-        "200":
-          description: Success
+        "201":
+          description: Created
           schema:
-            $ref: "#/definitions/SuccessResponse"
+            $ref: "#/definitions/CreatedResponse"
         # responses may fall through to errors
         "500":
           description: Error
@@ -294,10 +294,10 @@ paths:
           required: true
           type: integer
       responses:
-        "200":
-          description: Success
+        "201":
+          description: Created
           schema:
-            $ref: "#/definitions/SuccessResponse"
+            $ref: "#/definitions/CreatedResponse"
         # responses may fall through to errors
         "500":
           description: Error
@@ -473,10 +473,10 @@ paths:
           type: string
           format: date-time
       responses:
-        "200":
-          description: Success
+        "201":
+          description: Created
           schema:
-            $ref: "#/definitions/SuccessResponse"
+            $ref: "#/definitions/CreatedResponse"
         # responses may fall through to errors
         "500":
           description: Error
@@ -555,10 +555,10 @@ paths:
           type: file
           description: The media to upload
       responses:
-        "200":
-          description: Success
+        "201":
+          description: Created
           schema:
-            type: string
+            $ref: "#/definitions/CreatedResponse"
         "404":
           description: Error
           schema:
@@ -746,10 +746,10 @@ paths:
           type: string
           format: date-time
       responses:
-        "200":
-          description: Success
+        "201":
+          description: Created
           schema:
-            $ref: "#/definitions/SuccessResponse"
+            $ref: "#/definitions/CreatedResponse"
         # responses may fall through to errors
         "500":
           description: Error
@@ -854,10 +854,10 @@ paths:
           type: string
           format: date-time
       responses:
-        "200":
-          description: Success
+        "201":
+          description: Created
           schema:
-            $ref: "#/definitions/SuccessResponse"
+            $ref: "#/definitions/CreatedResponse"
         # responses may fall through to errors
         "500":
           description: Error
@@ -980,6 +980,16 @@ definitions:
     properties:
       message:
         type: string
+
+  CreatedResponse:
+    required:
+      - message
+      - id
+    properties:
+      message:
+        type: string
+      id:
+        type: number
 
   ErrorResponse:
     required:

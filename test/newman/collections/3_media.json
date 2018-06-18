@@ -1,0 +1,289 @@
+{
+	"info": {
+		"_postman_id": "4c89a3dd-c859-4bd2-9ab2-9d9e8ce2b851",
+		"name": "3. Media Flow",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "945f20a0-027c-4522-9881-2a67dd97ad56",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"user_id\", jsonData.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "testUser@test.com",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "testPassword",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "media",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9b95a539-9360-4abc-b52a-11f1c823ca1f",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"media_id\", jsonData.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userId",
+							"value": "{{user_id}}",
+							"type": "text"
+						},
+						{
+							"key": "tripMedia",
+							"type": "file",
+							"src": "./test/newman/assets/test_image.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/media",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "media",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/media",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "media/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "35067a14-08a7-4bb5-8a81-888b4f20db5f",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{url}}/media/{{media_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media",
+						"{{media_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "media/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "35067a14-08a7-4bb5-8a81-888b4f20db5f",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sizeX\": 200,\n  \"sizeY\": 200\n}"
+				},
+				"url": {
+					"raw": "{{url}}/media/{{media_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media",
+						"{{media_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "media/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "35067a14-08a7-4bb5-8a81-888b4f20db5f",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/media/{{media_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media",
+						"{{media_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user/{id}",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/user/{{user_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

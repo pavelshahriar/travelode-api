@@ -3,6 +3,8 @@
 const util = require('util');
 const db = require('../../db');
 const privacy = require('../helpers/privacyTranslator');
+const formatResponseMessage = require('../helpers/formatResponseMessage');
+const travelodeService = require('../services/travelodeService');
 
 privacy.getAllPrivacy();
 
@@ -52,7 +54,7 @@ function createTravelode(req, res) {
     console.log(query.sql);
     if (!err) {
       console.log('Travelode Created: ', result);
-      res.send(formatResponseMessage("Travelode Created"));
+      res.status(201).send(formatResponseMessage("Travelode Created", result.insertId));
     }
     else {
       console.error(err);
@@ -128,10 +130,4 @@ function deleteTravelodeById(req, res) {
       res.status(204).send(formatResponseMessage('Travelode Deleted'));
     }
   });
-}
-
-function formatResponseMessage(message) {
-  return {
-    "message": message
-  };
 }

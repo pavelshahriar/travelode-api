@@ -26,12 +26,14 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "newman": "^3.9.4",
     "nodemon": "^1.17.3",
     "should": "^7.1.0",
     "supertest": "^1.0.0"
   },
   "scripts": {
     "start": "node server.js",
-    "test": "swagger project test"
+    "test": "swagger project test",
+    "newman": "node newman.js"
   }
 }

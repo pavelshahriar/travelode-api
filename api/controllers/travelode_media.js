@@ -3,6 +3,7 @@
 const util = require('util');
 const db = require('../../db');
 const privacy = require('../helpers/privacyTranslator');
+const formatResponseMessage = require('../helpers/formatResponseMessage');
 const travelodeService = require('../services/travelodeService');
 const mediaService = require('../services/mediaService');
 const locationService = require('../services/locationService');
@@ -103,7 +104,7 @@ function addMediaToTravelode(req, res) {
             console.log(query.sql);
             if (!err) {
               console.log('Travelode Media Created: ', result);
-              res.send(formatResponseMessage("Media added to the travelode"));
+              res.status(201).send(formatResponseMessage("Media added to the travelode", result.insertId));
             }
             else {
               console.error(err);
@@ -190,7 +191,7 @@ function addTravelodeForMedia(req, res) {
             console.log(query.sql);
             if (!err) {
               console.log('Travelode Media Created: ', result);
-              res.send(formatResponseMessage("Media added to the travelode"));
+              res.status(201).send(formatResponseMessage("Media added to the travelode", result.insertId));
             }
             else {
               console.error(err);
@@ -298,7 +299,7 @@ function addTravelodeMedia(req, res) {
     console.log(query.sql);
     if (!err) {
       console.log('Travelode Media Created: ', result);
-      res.send(formatResponseMessage("Media added to the travelode"));
+      res.status(201).send(formatResponseMessage("Media added to the travelode", result.insertId));
     }
     else {
       console.error(err);
@@ -403,10 +404,4 @@ function deleteTravelodeMediaById(req, res) {
       res.status(204).send(formatResponseMessage('Travelode Media Entry Deleted'));
     }
   });
-}
-
-function formatResponseMessage(message) {
-  return {
-    "message": message
-  };
 }

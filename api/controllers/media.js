@@ -9,6 +9,7 @@ const s3 = require('../../s3');
 const config = require('../../config');
 const mediaUrlTransformer = require('../helpers/mediaUrlTransformer');
 const bucketNameTransformer = require('../helpers/bucketNameTransformer');
+const formatResponseMessage = require('../helpers/formatResponseMessage');
 const userService = require('../services/userService');
 const mediaService = require('../services/mediaService');
 const locationService = require('../services/locationService');
@@ -113,10 +114,10 @@ function createMedia(req, res) {
       const query = db.query('INSERT INTO ' + tableNameMedia + ' SET ?', media_data, function(err, result) {
         console.log(query.sql);
         if (!err) {
-          console.log('Media Created: ', result);
+          console.log('Media Created: ', result.insertId);
 
           if (clouded === false) {
-            res.send(formatResponseMessage("Media Created"));
+            res.status(201).send(formatResponseMessage("Media Created"));
           } else {
 
             // 3. Upload the image to s3 bucket if its
@@ -133,7 +134,7 @@ function createMedia(req, res) {
                     console.error('The file : ' + tripMedia.filename + ' was not removed.');
                   }
                   console.log(tripMedia.filename + ' is deleted from the server');
-                  res.send(formatResponseMessage("Media Created and Uploaded to Cloud"));
+                  res.status(201).send(formatResponseMessage("Media Created and Uploaded to Cloud", result.insertId));
                 });
               }
             });
@@ -180,29 +181,82 @@ function updateMediaById(req, res) {
   mediaService.isMediaValid(id, function (err, found) {
     if (err) {
       res.status(500).send(formatResponseMessage(util.format('%s', err)));
-    } else if (!found){
+    }
+    else if (!found){
       console.log('Media Not Found !');
       res.status(404).send(formatResponseMessage('Media not found'));
-    } else {
+    }
+    else {
 
-      userService.isUserValid(media_data.userId, function (err, found) {
-        if (err) {
-          console.log(err);
-          res.status(500).send(formatResponseMessage(util.format('%s', err)));
-        } else if (!found) {
-          console.log('Invalid User Id');
-          res.status(400).send(formatResponseMessage('Invalid User Id'));
-        } else {
-
+      // very very bad approach. we should think about using rxjs in later iteration
+      // if user id passed.. check if its valid or not
+      if(media_data.userId){
+        userService.isUserValid(media_data.userId, function (err, found) {
+          if (err) {
+            console.log(err);
+            res.status(500).send(formatResponseMessage(util.format('%s', err)));
+          }
+          else if (!found) {
+            console.log('Invalid User Id');
+            res.status(400).send(formatResponseMessage('Invalid User Id'));
+          }
+          else {
+            // if location if passed.. check if its valud or not
+            if(media_data.locationId){
+              locationService.isLocationValid(media_data.locationId, function (err, found) {
+                if (err) {
+                  console.log(err);
+                  res.status(500).send();
+                }
+                else if (!found) {
+                  console.log('Invalid Localtion Id');
+                  res.status(400).send(formatResponseMessage('Invalid Location Id'));
+                }
+                else {
+                  const query = db.query('UPDATE ' + tableNameMedia + ' SET ? WHERE id = ?', [media_data, id], function(err, result) {
+                    console.log(query.sql);
+                    if (!err) {
+                      console.log('Update Media: ', result);
+                      res.send(formatResponseMessage('Media Updated'));
+                    }
+                    else {
+                      console.error(err);
+                      res.status(500).send(formatResponseMessage(util.format('%s', err)));
+                    }
+                  });
+                }
+              });
+            }
+            // if no location id passed
+            else {
+              const query = db.query('UPDATE ' + tableNameMedia + ' SET ? WHERE id = ?', [media_data, id], function(err, result) {
+                console.log(query.sql);
+                if (!err) {
+                  console.log('Update Media: ', result);
+                  res.send(formatResponseMessage('Media Updated'));
+                }
+                else {
+                  console.error(err);
+                  res.status(500).send(formatResponseMessage(util.format('%s', err)));
+                }
+              });
+            }
+          }
+        });
+      }
+      // if no user id passed..
+      else {
+        if(media_data.locationId){
           locationService.isLocationValid(media_data.locationId, function (err, found) {
             if (err) {
               console.log(err);
               res.status(500).send();
-            } else if (!found) {
+            }
+            else if (!found) {
               console.log('Invalid Localtion Id');
               res.status(400).send(formatResponseMessage('Invalid Location Id'));
-            } else {
-
+            }
+            else {
               const query = db.query('UPDATE ' + tableNameMedia + ' SET ? WHERE id = ?', [media_data, id], function(err, result) {
                 console.log(query.sql);
                 if (!err) {
@@ -217,7 +271,53 @@ function updateMediaById(req, res) {
             }
           });
         }
-      });
+        else {
+          const query = db.query('UPDATE ' + tableNameMedia + ' SET ? WHERE id = ?', [media_data, id], function(err, result) {
+            console.log(query.sql);
+            if (!err) {
+              console.log('Update Media: ', result);
+              res.send(formatResponseMessage('Media Updated'));
+            }
+            else {
+              console.error(err);
+              res.status(500).send(formatResponseMessage(util.format('%s', err)));
+            }
+          });
+        }
+      }
+      // userService.isUserValid(media_data.userId, function (err, found) {
+      //   if (err) {
+      //     console.log(err);
+      //     res.status(500).send(formatResponseMessage(util.format('%s', err)));
+      //   } else if (!found) {
+      //     console.log('Invalid User Id');
+      //     res.status(400).send(formatResponseMessage('Invalid User Id'));
+      //   } else {
+      //
+      //     locationService.isLocationValid(media_data.locationId, function (err, found) {
+      //       if (err) {
+      //         console.log(err);
+      //         res.status(500).send();
+      //       } else if (!found) {
+      //         console.log('Invalid Localtion Id');
+      //         res.status(400).send(formatResponseMessage('Invalid Location Id'));
+      //       } else {
+      //
+      //         const query = db.query('UPDATE ' + tableNameMedia + ' SET ? WHERE id = ?', [media_data, id], function(err, result) {
+      //           console.log(query.sql);
+      //           if (!err) {
+      //             console.log('Update Media: ', result);
+      //             res.send(formatResponseMessage('Media Updated'));
+      //           }
+      //           else {
+      //             console.error(err);
+      //             res.status(500).send(formatResponseMessage(util.format('%s', err)));
+      //           }
+      //         });
+      //       }
+      //     });
+      //   }
+      // });
     }
   });
 }
@@ -284,6 +384,9 @@ function getMediaType(mimetype) {
     case 'image/jpeg':
       mediaType = 1;
       break;
+    case 'image/png':
+      mediaType = 1;
+      break;
     default:
       mediaType = 0;
   }
@@ -300,10 +403,4 @@ function removeMediaFromServer(file, callback) {
       callback(true);
     }
   });
-}
-
-function formatResponseMessage(message) {
-  return {
-    "message": message
-  }
 }

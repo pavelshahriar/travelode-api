@@ -1,0 +1,311 @@
+{
+	"info": {
+		"_postman_id": "487a9df6-61bb-4331-bfd3-c9c195623ef4",
+		"name": "2. Travelode Flow",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "945f20a0-027c-4522-9881-2a67dd97ad56",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"user_id\", jsonData.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "testUser@test.com",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "testPassword",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "travelode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf8ececa-331d-42f0-891e-233006d27bb9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Test travelode of test user",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "userId",
+							"value": "{{user_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/travelode",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"travelode"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "travelode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "db4c0712-cadb-46ef-8a74-527046d44a6a",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"travelode_id\", jsonData.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Test travelode of test user",
+							"type": "text"
+						},
+						{
+							"key": "userId",
+							"value": "{{user_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/travelode",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"travelode"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "travelode/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf8ececa-331d-42f0-891e-233006d27bb9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Test travelode of test user",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "userId",
+							"value": "{{user_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/travelode/{{travelode_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"travelode",
+						"{{travelode_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "travelode/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf8ececa-331d-42f0-891e-233006d27bb9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"Description of the test Travelode\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/travelode/{{travelode_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"travelode",
+						"{{travelode_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "travelode/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf8ececa-331d-42f0-891e-233006d27bb9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"Description of the test Travelode\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/travelode/{{travelode_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"travelode",
+						"{{travelode_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user/{id}",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/user/{{user_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,8 +1,10 @@
 'use strict';
 
 const util = require('util');
+
 const db = require('../../db');
 const privacy = require('../helpers/privacyTranslator');
+const mediaUrlTransformer = require('../helpers/mediaUrlTransformer');
 const formatResponseMessage = require('../helpers/formatResponseMessage');
 const travelodeService = require('../services/travelodeService');
 const mediaService = require('../services/mediaService');
@@ -50,6 +52,11 @@ function findMediasByTravelode(req, res) {
         console.log(query.sql);
         if (!err) {
           console.log('Find Media by Travelode: ', result);
+          result.forEach(el => {
+            el['url'] = mediaUrlTransformer.mediaBasePathUrl[el.storage] + el.filename;
+            delete el.filename;
+            delete el.storage;
+          });
           res.send(result);
         }
         else {

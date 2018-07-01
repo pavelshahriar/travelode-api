@@ -116,11 +116,11 @@ function createMedia(req, res) {
         if (!err) {
           console.log('Media Created: ', result.insertId);
 
-          if (clouded === false) {
-            res.status(201).send(formatResponseMessage("Media Created"));
+          if (!clouded) {
+            res.status(201).send(formatResponseMessage("Media Created", result.insertId));
           } else {
 
-            // 3. Upload the image to s3 bucket if its
+            // 3. Upload the image to s3 bucket
             s3.uploadImage(bucketName, tripMedia.filename, tripMedia.path, function(err) {
               if (err) {
                 console.error(err);

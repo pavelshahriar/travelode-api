@@ -24,4 +24,4 @@ class userService {
   }
 }
 
-module.exports = new userService('user', 'id, email, fullname, photo, created, updated');
+module.exports = new userService('user', 'id, email, fullname, photoId, created, updated');

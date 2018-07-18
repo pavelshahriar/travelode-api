@@ -15,7 +15,7 @@ module.exports = {
 };
 
 const tableNameUser = 'user';
-const selectUserItems = 'id, email, fullname, photoId, created, updated';
+const selectUserItems = 'id, email, fullname, photo, created, updated';
 
 function findUsers(req, res) {
   const page = req.swagger.params.page.value || 0;

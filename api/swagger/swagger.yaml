@@ -1010,7 +1010,7 @@ definitions:
       fullname:
         type: string
         description: User Full Name
-      photoId:
+      photo:
         description: User Photo's Media Id
         type: number
       created:

@@ -3,6 +3,7 @@
 const util = require('util');
 const db = require('../../db');
 const formatResponseMessage = require('../helpers/formatResponseMessage');
+const mediaUrlTransformer = require('../helpers/mediaUrlTransformer');
 
 module.exports = {
   findUsers: findUsers,
@@ -14,7 +15,7 @@ module.exports = {
 };
 
 const tableNameUser = 'user';
-const selectUserItems = 'id, email, fullname, photo, created, updated';
+const selectUserItems = 'id, email, fullname, photoId, created, updated';
 
 function findUsers(req, res) {
   const page = req.swagger.params.page.value || 0;

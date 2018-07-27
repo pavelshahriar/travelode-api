@@ -3,7 +3,7 @@ info:
   version: "0.0.1"
   title: Travelode API
 
-host: 127.0.0.1:28825
+host: localhost:28252
 basePath: /
 schemes:
   - http
@@ -715,7 +715,7 @@ paths:
       consumes:
         - multipart/form-data
       produces:
-          - application/json
+        - application/json
       parameters:
         - name: id
           in: path
@@ -853,6 +853,18 @@ paths:
           required: false
           type: string
           format: date-time
+        - in: query
+          name: categories
+          description: Tagged categories of this travelode media
+          required: false
+          type: array
+          items:
+            type: string
+            enum:
+              - do
+              - eat
+              - see
+          collectionFormat: csv
       responses:
         "201":
           description: Created
@@ -1149,6 +1161,21 @@ definitions:
       isCover:
         type: boolean
         description: Is this the cover for the travelode or not
+      categories:
+        description: List of categories this media is tagged with
+        type: array
+        items:
+          $ref: "#/definitions/Category"
+
+  Category:
+    type: object
+    properties:
+      id:
+        description: Category id
+        type: number
+      name:
+        description: Category name
+        type: string
 
   TravelodeMediaListResponse:
     required:

@@ -16,7 +16,8 @@ const configs = {
   aws_secret : process.env['AWS_SECRET_ACCESS_KEY'],
   aws_region : process.env['AWS_REGION'],
   s3_bucket  : process.env['S3_BUCKET_NAME_PREFIX'],
-  newman_env : process.env['NEWMAN_ENV']
+  newman_env : process.env['NEWMAN_ENV'],
+  local_cdn  : process.env['LOCAL_CDN']
 };
 
 console.log('Configs :');

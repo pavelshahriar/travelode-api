@@ -10,6 +10,7 @@ const travelodeService = require('../services/travelodeService');
 const mediaService = require('../services/mediaService');
 const locationService = require('../services/locationService');
 const travelodeMediaService = require('../services/travelodeMediaService');
+const categoryService = require('../services/categoryService');
 
 module.exports = {
   findMediasByTravelode: findMediasByTravelode,
@@ -32,6 +33,10 @@ const selectTravelodeItems = 'id, title, description, userId, created, updated, 
 const tableNameTravelodeMedia = 'travelode_media';
 const selectTravelodeMediaItems = 'id, travelodeId, mediaId, rollNo, privacy, title, caption, displayDate, displayLocationId, created, isCover';
 
+const tableNameTravelodeMediaCategory = 'travelode_media_category';
+const selectTravelodeMediaCategoryItems = 'id, travelodeId, mediaId, categoryId';
+
+// GET /travelode/{id}/media
 function findMediasByTravelode(req, res) {
   const id = req.swagger.params.id.value;
   const page = req.swagger.params.page.value || 0;
@@ -68,6 +73,7 @@ function findMediasByTravelode(req, res) {
   });
 }
 
+// POST /travelode/{id}/media
 function addMediaToTravelode(req, res) {
   const id = req.swagger.params.id.value;
   const mediaId = req.swagger.params.mediaId.value;
@@ -124,6 +130,7 @@ function addMediaToTravelode(req, res) {
   });
 }
 
+// GET /media/{id}/travelode
 function findTravelodeByMedia(req, res) {
   const id = req.swagger.params.id.value;
   const page = req.swagger.params.page.value || 0;
@@ -155,6 +162,7 @@ function findTravelodeByMedia(req, res) {
   });
 }
 
+// POST /media/{id}/travelode
 function addTravelodeForMedia(req, res) {
   const id = req.swagger.params.id.value;
   const travelodeId = req.swagger.params.travelodeId.value;
@@ -212,6 +220,7 @@ function addTravelodeForMedia(req, res) {
 
 }
 
+// GET /travelode/media
 function findTravelodeMedias(req, res) {
   const travelodeId = req.swagger.params.travelodeId.value;
   const mediaId = req.swagger.params.mediaId.value;
@@ -281,40 +290,102 @@ function findTravelodeMedias(req, res) {
 
 }
 
+// POST /travelode/media
 function addTravelodeMedia(req, res) {
   const travelodeId = req.swagger.params.travelodeId.value;
-  const mediaId = req.swagger.params.mediaId.value;
-  const caption = req.swagger.params.caption.value || '';
-  const displayDate = req.swagger.params.displayDate.value;
-  const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
-  const storeDisplayDate = (typeof displayDate == 'undefined') ? currentDate :
-    new Date(displayDate).toISOString().slice(0, 19).replace('T', ' ');
-
-  const travelode_media_data = {
-    "travelodeId": travelodeId,
-    "mediaId": mediaId,
-    "title" : req.swagger.params.title.value,
-    "caption" : caption,
-    "displayDate" : storeDisplayDate,
-    "privacy" : privacy.privacyMatrix.findIndex(el => el === 'public'),
-    "created" : currentDate
-  };
-
-  console.log(travelode_media_data);
-
-  const query = db.query('INSERT INTO ' + tableNameTravelodeMedia + ' SET ?', travelode_media_data, function(err, result) {
-    console.log(query.sql);
-    if (!err) {
-      console.log('Travelode Media Created: ', result);
-      res.status(201).send(formatResponseMessage("Media added to the travelode", result.insertId));
-    }
-    else {
-      console.error(err);
+  travelodeService.isTravelodeValid(travelodeId, function (err, found) {
+    if (err) {
       res.status(500).send(formatResponseMessage(util.format('%s', err)));
+    } else if (!found) {
+      console.log('Travelode Not Found !');
+      res.status(404).send(formatResponseMessage('Travelode not found'));
+    } else {
+
+      const mediaId = req.swagger.params.mediaId.value;
+      mediaService.isMediaValid(mediaId, function (err, found) {
+        if (err) {
+          res.status(500).send(formatResponseMessage(util.format('%s', err)));
+        } else if (!found) {
+          console.log('Media Not Found !');
+          res.status(404).send(formatResponseMessage('Invalid Media Id'));
+        } else {
+
+          const caption = req.swagger.params.caption.value || '';
+          const displayDate = req.swagger.params.displayDate.value;
+          const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+          const storeDisplayDate = (typeof displayDate == 'undefined') ? currentDate :
+            new Date(displayDate).toISOString().slice(0, 19).replace('T', ' ');
+
+          const travelode_media_data = {
+            "travelodeId": travelodeId,
+            "mediaId": mediaId,
+            "title" : req.swagger.params.title.value,
+            "caption" : caption,
+            "displayDate" : storeDisplayDate,
+            "privacy" : privacy.privacyMatrix.findIndex(el => el === 'public'),
+            "created" : currentDate
+          };
+
+          console.log(travelode_media_data);
+
+          const query = db.query('INSERT INTO ' + tableNameTravelodeMedia + ' SET ?', travelode_media_data, function(err, result) {
+            console.log(query.sql);
+            if (!err) {
+              console.log('Travelode Media Created: ', result);
+
+              // add categories
+              const categories = req.swagger.params.categories.value;
+              if (categories.length > 0) {
+                categories.forEach((category, index) => {
+                  categoryService.getCategoryId(category, (err, id) => {
+                    if (err) {
+                      res.status(500).send(formatResponseMessage(util.format('%s', err)));
+                    } else if (!id) {
+                      res.status(500).send(formatResponseMessage("One or all of the categories in the swagger UI are wrong. Please contact the API admin to fix it"));
+                    } else {
+
+                      const travelode_media_category_data = {
+                        "travelodeId": travelodeId,
+                        "mediaId": mediaId,
+                        "categoryId": id
+                      };
+
+                      const query = db.query('INSERT INTO ' + tableNameTravelodeMediaCategory + ' SET ?', travelode_media_category_data, function(err, result2) {
+                        console.log(query.sql);
+                        if (!err) {
+                          console.log('Travelode Media Category Added: ', result2);
+
+                          // once done with all the category inserts
+                          if (index === (categories.length-1)) {
+                            res.status(201).send(formatResponseMessage("Travelode Media created and categories added to it", result.insertId));
+                          }
+
+                        } else {
+                          console.error(err);
+                          res.status(500).send(formatResponseMessage(util.format('%s', err)));
+                        }
+                      });
+                    }
+                  });
+                });
+              } else {
+                res.status(201).send(formatResponseMessage("Travelode Media created and categories added to it", result.insertId));
+              }
+              // end of categories block
+
+            }
+            else {
+              console.error(err);
+              res.status(500).send(formatResponseMessage(util.format('%s', err)));
+            }
+          });
+        }
+      });
     }
   });
 }
 
+// GET /travelode/media/{id}
 function getTravelodeMediaById(req, res) {
   const id = req.swagger.params.id.value;
   const query = db.query('SELECT '+ selectTravelodeMediaItems +' FROM ' + tableNameTravelodeMedia + ' WHERE id = ? LIMIT 0, 1', id, function(err, result) {
@@ -334,6 +405,7 @@ function getTravelodeMediaById(req, res) {
   });
 }
 
+// PUT /travelode/media/{id}
 function updateTravelodeMediaById(req, res) {
   const id = req.swagger.params.id.value;
   const travelode_media_data =  req.swagger.params.travelodeMediaData.value;
@@ -391,6 +463,7 @@ function updateTravelodeMediaById(req, res) {
   }
 }
 
+// DELETE /travelode/media/{id}
 function deleteTravelodeMediaById(req, res) {
   const id = req.swagger.params.id.value;
   const query = db.query('DELETE FROM ' + tableNameTravelodeMedia + ' WHERE id = ?', id, function(err, result) {

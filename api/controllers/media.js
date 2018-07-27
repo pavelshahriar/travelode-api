@@ -26,6 +26,7 @@ const tableNameMedia = 'media';
 const selectMediaItems = 'id, type, filename, userId, uploaded, updated, locationId, created, sizeX, sizeY, storage';
 const bucketName = bucketNameTransformer();
 
+// GET /media
 function findMedias(req, res) {
   const page = req.swagger.params.page.value || 0;
   const size = req.swagger.params.size.value || 50;
@@ -73,6 +74,7 @@ function findMedias(req, res) {
   });
 }
 
+// POST /media
 function createMedia(req, res) {
   const userId = req.swagger.params.userId.value;
   const tripMedia = req.swagger.params.tripMedia.value;
@@ -149,6 +151,7 @@ function createMedia(req, res) {
   });
 }
 
+// GET /media/{id}
 function getMediaById(req, res) {
   const id = req.swagger.params.id.value;
   const query = db.query('SELECT '+ selectMediaItems +' FROM ' + tableNameMedia + ' WHERE id = ? LIMIT 0, 1', id, function(err, result) {
@@ -173,6 +176,7 @@ function getMediaById(req, res) {
   });
 }
 
+// PUT /media/{id}
 function updateMediaById(req, res) {
   const id = req.swagger.params.id.value;
   const media_data =  req.swagger.params.mediaData.value;
@@ -322,6 +326,7 @@ function updateMediaById(req, res) {
   });
 }
 
+// DELETE /media/{id}
 function deleteMediaById(req, res) {
   const id = req.swagger.params.id.value;
 

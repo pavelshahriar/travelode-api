@@ -17,6 +17,7 @@ module.exports = {
 const tableNameUser = 'user';
 const selectUserItems = 'id, email, fullname, photo, created, updated';
 
+// GET /user
 function findUsers(req, res) {
   const page = req.swagger.params.page.value || 0;
   const size = req.swagger.params.size.value || 50;
@@ -38,6 +39,7 @@ function findUsers(req, res) {
   });
 }
 
+// POST /user
 function createUser(req, res) {
   const user_data = {
     "email" : req.swagger.params.email.value,
@@ -58,6 +60,7 @@ function createUser(req, res) {
   });
 }
 
+// GET /user/{id}
 function getUserById(req, res) {
   const id = req.swagger.params.id.value;
   const query = db.query('SELECT '+ selectUserItems +' FROM ' + tableNameUser + ' WHERE id = ? LIMIT 0, 1', id, function(err, result) {
@@ -77,6 +80,7 @@ function getUserById(req, res) {
   });
 }
 
+// POST /user/{id}
 function updateUserById(req, res) {
   const id = req.swagger.params.id.value;
   const user_data =  req.swagger.params.userData.value;
@@ -111,6 +115,7 @@ function updateUserById(req, res) {
   });
 }
 
+// PUT /user/{id}
 function deleteUserById(req, res) {
   const id = req.swagger.params.id.value;
   const query = db.query('DELETE FROM ' + tableNameUser + ' WHERE id = ?', id, function(err, result) {
@@ -133,6 +138,7 @@ function deleteUserById(req, res) {
   });
 }
 
+// DELETE /user/{id}
 function retrieveUserByLogin(req, res) {
   const login_credential = {
     "email" : req.swagger.params.email.value,

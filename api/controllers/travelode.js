@@ -19,6 +19,7 @@ module.exports = {
 const tableNameTravelode = 'travelode';
 const selectTravelodeItems = 'id, title, description, userId, created, updated, coverId';
 
+// GET /travelode
 function findTravelodes(req, res) {
   const page = req.swagger.params.page.value || 0;
   const size = req.swagger.params.size.value || 50;
@@ -41,6 +42,7 @@ function findTravelodes(req, res) {
   });
 }
 
+// POST /travelode
 function createTravelode(req, res) {
   const travelode_data = {
     "title" : req.swagger.params.title.value,
@@ -63,6 +65,7 @@ function createTravelode(req, res) {
   });
 }
 
+// GET /travelode/{id}
 function getTravelodeById(req, res) {
   const id = req.swagger.params.id.value;
   const query = db.query('SELECT '+ selectTravelodeItems +' FROM ' + tableNameTravelode + ' WHERE id = ? LIMIT 0, 1', id, function(err, result) {
@@ -82,6 +85,7 @@ function getTravelodeById(req, res) {
   });
 }
 
+// PUT /travelode/{id}
 function updateTravelodeById(req, res) {
   const id = req.swagger.params.id.value;
   const travelode_data =  req.swagger.params.travelodeData.value;
@@ -110,6 +114,7 @@ function updateTravelodeById(req, res) {
   });
 }
 
+// DELETE /travelode/{id}
 function deleteTravelodeById(req, res) {
   const id = req.swagger.params.id.value;
   const query = db.query('DELETE FROM ' + tableNameTravelode + ' WHERE id = ?', id, function(err, result) {

@@ -19,6 +19,13 @@ const selectUserItems = 'id, email, fullname, photo, created, updated';
 
 // GET /user
 function findUsers(req, res) {
+
+
+  console.log(util.inspect(req.swagger.params, false, null));
+
+
+
+
   const page = req.swagger.params.page.value || 0;
   const size = req.swagger.params.size.value || 50;
   const email = req.swagger.params.email.value || '';

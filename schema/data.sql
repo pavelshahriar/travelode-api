@@ -26,6 +26,16 @@ INSERT INTO `category` VALUES (3,'do'),(2,'eat'),(1,'see');
 UNLOCK TABLES;
 
 --
+-- Dumping data for table `location`
+--
+
+LOCK TABLES `location` WRITE;
+/*!40000 ALTER TABLE `location` DISABLE KEYS */;
+INSERT INTO `location` VALUES (1,'UNKNOWN','0','0','-','-','-');
+/*!40000 ALTER TABLE `location` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping data for table `privacy`
 --
 
@@ -44,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-08-09 22:51:23
+-- Dump completed on 2018-08-09 22:54:30

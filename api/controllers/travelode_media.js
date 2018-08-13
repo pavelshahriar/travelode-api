@@ -333,9 +333,9 @@ function addTravelodeMedia(req, res) {
             if (!err) {
               console.log('Travelode Media Created: ', result);
 
-              // add categories
+              // add categories if there is any sent
               const categories = req.swagger.params.categories.value;
-              if (categories.length > 0) {
+              if (categories && categories.length > 0) {
                 categories.forEach((category, index) => {
                   categoryService.getCategoryId(category, (err, id) => {
                     if (err) {
@@ -369,7 +369,7 @@ function addTravelodeMedia(req, res) {
                   });
                 });
               } else {
-                res.status(201).send(formatResponseMessage("Travelode Media created and categories added to it", result.insertId));
+                res.status(201).send(formatResponseMessage("Travelode Media created", result.insertId));
               }
               // end of categories block
 

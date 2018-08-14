@@ -15,6 +15,7 @@ pids
 
 # Dependency directory
 node_modules
+.vscode
 
 # exclude all of uploads folder, but keep the folder itself
 uploads/*

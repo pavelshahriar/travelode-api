@@ -23,6 +23,8 @@ tags:
     description: Media APIs. Find and create media. Get, update, delete media by id.
   - name: Travelode Media
     description: Travelode-Media APIs. Find and assign media to travelodes. Get, update, delete travelode-media by id.
+  - name: Travelode Media Category
+    description: Travelode-Media Category APIs. Find and assign travelode-media-category to travelode-Medias. Get, update, delete travelode-media-category by id.
 
 paths:
   /user:
@@ -981,6 +983,201 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+# MEDIA CATEGORY STARTS 
+  /travelode/media/category:
+    x-swagger-router-controller: travelode_media_category
+
+    get:
+      tags:
+        - Travelode Media Category
+      summary: Returns list of a travelode-media-category
+      operationId: findTravelodeMediaCategory
+      parameters:
+        - name: travelodeId
+          in: query
+          description: Find by the travelode Id
+          required: false
+          type: integer
+          minimum: 1
+        - name: mediaId
+          in: query
+          description: Find by the Media Id
+          required: false
+          type: integer
+          minimum: 1
+        - name: categoryId
+          in: query
+          description: Find by The Category Id
+          required: false
+          type: integer
+          minimum: 1
+        - name: page
+          in: query
+          description: The page number to get. Default to 0.
+          required: false
+          type: string
+        - name: size
+          in: query
+          description: The size of the page to get. Default to 50.
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/TravelodeMediaCategoryListResponse"
+        # responses may fall through to errors
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    post:
+      tags:
+        - Travelode Media Category
+      summary: Add a travelode-media-category
+      operationId: addTravelodeMediaCategory
+      consumes:
+        - multipart/form-data
+      produces:
+          - application/json
+      parameters:
+        - name: travelodeId
+          in: formData
+          description: The travelode id for which the category will be added
+          required: true
+          type: integer
+          minimum: 1
+        - name: mediaId
+          in: formData
+          description: The media id which will be added for the travelode category
+          required: true
+          type: integer
+          minimum: 1
+        - name: categoryId
+          in: formData
+          description: The category id which will be add for the media
+          required: true
+          type: integer
+
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/CreatedResponse"
+        # responses may fall through to errors
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /travelode/media/category/{id}:
+    x-swagger-router-controller: travelode_media_category
+
+    get:
+      tags:
+        - Travelode Media Category
+      summary: Returns a single travelode-media category details
+      operationId: getTravelodeMediaCategoryById
+      parameters:
+        - name: id
+          in: path
+          description: The category Id associated with travelode-media
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/TravelodeMediaCategoryListResponse"
+        "404":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+            
+    put:
+      tags:
+        - Travelode Media Category
+      summary: Updates a travelode-media-category details
+      operationId: updateTravelodeMediaCategoryById
+      consumes:
+        - multipart/form-data
+      produces:
+          - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The travelode-media-category Id
+          required: true
+          type: integer
+          minimum: 1
+        - name: travelodeId
+          in: formData
+          description: The travelode id for which the category will be updated
+          required: false
+          type: integer
+          minimum: 1
+        - name: mediaId
+          in: formData
+          description: The media id which will be updated for the travelode category
+          required: false
+          type: integer
+          minimum: 1
+        - name: categoryId
+          in: formData
+          description: The category id which will be updated for the travelode-media-category
+          required: false
+          type: integer
+
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        "404":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - Travelode Media Category
+      summary: Delete a travelode-media-category
+      operationId: deleteTravelodeMediaCategoryById
+      parameters:
+        - name: id
+          in: path
+          description: The travelode-media-category Id
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        "204":
+          description: Travelode Media Category is removed
+        "404":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+# MEDIA CATEGORY SCHEMA ENDS
+
   /swagger:
     x-swagger-pipe: swagger_raw
 
@@ -1186,3 +1383,29 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/TravelodeMedia"
+  
+  TravelodeMediaCategory:
+    type: object
+    properties:
+      id:
+        description: TravelodeMediaCategory Id
+        type: number
+      travelodeId:
+        description: Travelode Id
+        type: number
+      mediaId:
+        description: Media Id
+        type: number
+      categoryId:
+        description: Category Id
+        type: number
+  
+  TravelodeMediaCategoryListResponse:
+    required:
+      - travelodeMediaCategories
+    properties:
+      # Array of TravelodeMediaCategory
+      travelodeMediaCategories:
+        type: array
+        items:
+          $ref: "#/definitions/TravelodeMediaCategory"

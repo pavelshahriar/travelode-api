@@ -9,7 +9,7 @@ class travelodeMediaCategoryService {
   }
 
   travelodeMediaHasCategories(travelodeId, mediaId, callback) {
-    const query = db.query('SELECT '+ this.selectItems +' FROM ' + this.tableName + ' WHERE travelideId = ? AND mediaId = ?',
+    const query = db.query('SELECT '+ this.selectItems +' FROM ' + this.tableName + ' WHERE travelodeId = ? AND mediaId = ?',
     [travelodeId, mediaId],
     function(err, result) {
       console.log(query.sql);

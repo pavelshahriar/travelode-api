@@ -1041,6 +1041,7 @@ paths:
         - multipart/form-data
       produces:
           - application/json
+      # FIXME No other POST method added TravelodeMediaCateogry type definition, need a decision
       parameters:
         - name: travelodeId
           in: formData
@@ -1054,6 +1055,7 @@ paths:
           required: true
           type: integer
           minimum: 1
+        # FIXME Accept categories as array not a singular input
         - name: categoryId
           in: formData
           description: The category id which will be add for the media
@@ -1109,10 +1111,6 @@ paths:
         - Travelode Media Category
       summary: Updates a travelode-media-category details
       operationId: updateTravelodeMediaCategoryById
-      consumes:
-        - multipart/form-data
-      produces:
-          - application/json
       parameters:
         - name: id
           in: path
@@ -1120,24 +1118,20 @@ paths:
           required: true
           type: integer
           minimum: 1
-        - name: travelodeId
-          in: formData
-          description: The travelode id for which the category will be updated
+        - name: travelodeMediaCategoryData
+          in: body
+          description: The travelode media category data to update
           required: false
-          type: integer
-          minimum: 1
-        - name: mediaId
-          in: formData
-          description: The media id which will be updated for the travelode category
-          required: false
-          type: integer
-          minimum: 1
-        - name: categoryId
-          in: formData
-          description: The category id which will be updated for the travelode-media-category
-          required: false
-          type: integer
-
+          schema:
+            type: object
+            properties:
+              travelodeId:
+                type: integer
+              mediaId:
+                type: integer
+              # FIXME Accept categories as array not a singular input
+              categoryId:
+                type: integer
       responses:
         "200":
           description: Success

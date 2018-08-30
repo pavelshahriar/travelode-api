@@ -24,6 +24,7 @@ uploads/*
 # Users Environment Variables
 .lock-wscript
 .env
+*.env
 
 # Runtime configuration for swagger app
 config/runtime.yaml

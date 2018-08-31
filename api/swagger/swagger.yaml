@@ -1055,7 +1055,6 @@ paths:
           required: true
           type: integer
           minimum: 1
-        # FIXME Accept categories as array not a singular input
         - name: categoryId
           in: formData
           description: The category id which will be add for the media
@@ -1121,7 +1120,7 @@ paths:
         - name: travelodeMediaCategoryData
           in: body
           description: The travelode media category data to update
-          required: false
+          required: true
           schema:
             type: object
             properties:
@@ -1129,7 +1128,6 @@ paths:
                 type: integer
               mediaId:
                 type: integer
-              # FIXME Accept categories as array not a singular input
               categoryId:
                 type: integer
       responses:

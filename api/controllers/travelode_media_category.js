@@ -79,7 +79,7 @@ function addTravelodeMediaCategory(req, res) {
       res.status(500).send(formatResponseMessage(util.format('%s', err)));
     } else if (!found) {
       console.log('Travelode Not Found!');
-      res.status(404).send(formatResponseMessage('Travelode not found'));
+      res.status(404).send(formatResponseMessage('Travelode not found: Invalid Travelode ID'));
     } else {
 
       const mediaId = req.swagger.params.mediaId.value;
@@ -88,16 +88,15 @@ function addTravelodeMediaCategory(req, res) {
           res.status(500).send(formatResponseMessage(util.format('%s', err)));
         } else if (!found) {
           console.log('Media Not Found !');
-          res.status(404).send(formatResponseMessage('Invalid Media Id'));
+          res.status(404).send(formatResponseMessage('Media not found: Invalid Media ID'));
         } else {
-          // FIXME Get categories as array not a singular input, check travelode_media.js:337
           const categoryId = req.swagger.params.categoryId.value;
           categoryService.isCategoryValid(categoryId, function (err, found) {
             if (err) {
               res.status(500).send(formatResponseMessage(util.format('%s', err)));
             } else if (!found) {
               console.log('Category Not Found !');
-              res.status(404).send(formatResponseMessage('Invalid Category Id'));
+              res.status(404).send(formatResponseMessage('Category not found: Invalid Category ID'));
             } else {
 
               const media_category_data = {
@@ -153,11 +152,11 @@ function updateTravelodeMediaCategoryById(req, res) {
   const travelodeMediaCategoryData = req.swagger.params.travelodeMediaCategoryData.value;
   console.log(travelodeMediaCategoryData);
 
-  /*const categoryId = req.swagger.params.categoryId.value;
-    const travelodeId = req.swagger.params.travelodeId.value;
-    const mediaId = req.swagger.params.mediaId.value; */
+    const categoryId = travelodeMediaCategoryData['categoryId']
+    const travelodeId = travelodeMediaCategoryData['travelodeId'];
+    const mediaId = travelodeMediaCategoryData['mediaId']
 
-  /*   const travelode_media_category_data = {}
+  /*   const travelode_media_category_data = {} 
   
     if(categoryId || travelodeId || mediaId ) {
       if (categoryId) {
@@ -171,29 +170,68 @@ function updateTravelodeMediaCategoryById(req, res) {
       }
     }
   
-    console.log(travelode_media_category_data); */
-
+    console.log(travelode_media_category_data);
+*/
   // TODO Add async callback
-
-  const query = db.query('UPDATE ' + tableNameTravelodeMediaCategory + ' SET ? WHERE id = ?', [travelodeMediaCategoryData, id], function (err, result) {
-    console.log(query.sql);
-    console.log(result);
-
+  travelodeMediaCategoryService.isTravelodeMediaCategoryValid(id, function(err, found) {
     if (err) {
-      console.error(err);
       res.status(500).send(formatResponseMessage(util.format('%s', err)));
-
+    } else if (!found) {
+      res.status(404).send(formatResponseMessage('TravelodeMediaCategory not found: Invalid TravelodeMediaCategory ID'));
+      console.log('TravelodeMediaCateogory Not Found');
     }
-    else if (result.affectedRows == 0) {
-      res.status(404).send(formatResponseMessage('No Travelode-media-category Found'));
-    }
-
     else {
-      console.log('Travelode media category updated: ', result);
-      res.status(200).send(formatResponseMessage('Travelode media category updated'));
+
+  travelodeService.isTravelodeValid(travelodeMediaCategoryData['travelodeId'], function (err, found) {
+    if (err) {
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
+    } else if (!found) {
+      console.log('Travelode Not Found!');
+      res.status(404).send(formatResponseMessage('Travelode not found: Invalid Travelode ID'));
+    } else {
+    
+      mediaService.isMediaValid(travelodeMediaCategoryData['mediaId'], function (err, found) {
+        if (err) {
+          res.status(500).send(formatResponseMessage(util.format('%s', err)));
+        } else if (!found) {
+          console.log('Media Not Found !');
+          res.status(404).send(formatResponseMessage('Media not found: Invalid Media ID'));
+        } else {
+
+          categoryService.isCategoryValid(travelodeMediaCategoryData['categoryId'], function (err, found) {
+            if (err) {
+              res.status(500).send(formatResponseMessage(util.format('%s', err)));
+            } else if (!found) {
+              console.log('Category Not Found !');
+              res.status(404).send(formatResponseMessage('Category not found: Invalid Category ID'));
+            } else {
+
+              const query = db.query('UPDATE ' + tableNameTravelodeMediaCategory + ' SET ? WHERE id = ?', [travelodeMediaCategoryData, id], function (err, result) {
+                console.log(query.sql);
+                console.log(result);
+
+                if (err) {
+                  console.error(err);
+                  res.status(500).send(formatResponseMessage(util.format('%s', err)));
+
+                }
+                else if (result.affectedRows == 0) {
+                  res.status(404).send(formatResponseMessage('No Travelode-media-category Found'));
+                }
+
+                else {
+                  console.log('Travelode media category updated: ', result);
+                  res.status(200).send(formatResponseMessage('Travelode media category updated'));
+                }
+              });
+            }
+          });
+        }
+      });
     }
   });
-
+  }
+});
 }
 
 // DELETE /travelode/mediia/category/{id}

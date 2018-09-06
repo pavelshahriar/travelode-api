@@ -1,5 +1,6 @@
 'use strict';
 
+const async = require('async');
 const util = require('util');
 const db = require('../../db');
 const privacy = require('../helpers/privacyTranslator');
@@ -152,28 +153,218 @@ function updateTravelodeMediaCategoryById(req, res) {
   const travelodeMediaCategoryData = req.swagger.params.travelodeMediaCategoryData.value;
   console.log(travelodeMediaCategoryData);
 
-    const categoryId = travelodeMediaCategoryData['categoryId']
-    const travelodeId = travelodeMediaCategoryData['travelodeId'];
-    const mediaId = travelodeMediaCategoryData['mediaId']
+  const categoryId = travelodeMediaCategoryData['categoryId']
+  const travelodeId = travelodeMediaCategoryData['travelodeId'];
+  const mediaId = travelodeMediaCategoryData['mediaId'];
 
-  /*   const travelode_media_category_data = {} 
-  
-    if(categoryId || travelodeId || mediaId ) {
-      if (categoryId) {
-        Object.assign(travelode_media_category_data, {"categoryId": categoryId });
-      }
-      if (travelodeId) {
-        Object.assign(travelode_media_category_data, {"travelodeId": travelodeId });
-      }
-      if (mediaId) {
-        Object.assign(travelode_media_category_data, {"mediaId": mediaId });
-      }
+  travelodeMediaCategoryService.isTravelodeMediaCategoryValid(id, function (err, found) {
+    if (err) {
+      res.status(500).send(formatResponseMessage(util.format('%s', err)));
+    } else if (!found) {
+      res.status(404).send(formatResponseMessage('TravelodeMediaCategory not found: Invalid TravelodeMediaCategory ID'));
+      console.log('TravelodeMediaCategory Not Found');
     }
-  
-    console.log(travelode_media_category_data);
+    else {
+
+      const isPresent = [];
+      let responseSend = true; 
+      if (categoryId) isPresent.push('category');
+      if (travelodeId) isPresent.push('travelode');
+      if (mediaId) isPresent.push('media');
+      console.log(isPresent);
+      // isPresent = ['category']
+
+     // isPresent.forEach((key, value) => {
+       for(let i = 0; i < isPresent.length; i++) {
+        switch(isPresent[i]) {
+          case 'category' : {
+            categoryService.isCategoryValid(categoryId, function (err, found) {
+              if (err) {
+                res.status(500).send(formatResponseMessage(util.format('%s', err)));
+                responseSend = true;
+                console.log('Switch triggered');
+              } else if (!found) {
+                console.log('Category Not Found !');
+                res.status(404).send(formatResponseMessage('Category not found: Invalid Category ID'));
+                responseSend = true;
+                console.log('Switch triggered');
+              }
+            });
+            break;
+          }
+          case 'travelode': {
+            travelodeService.isTravelodeValid(travelodeId, function (err, found) {
+              if (err) {
+                res.status(500).send(formatResponseMessage(util.format('%s', err)));
+                responseSend = true;
+                console.log('Switch triggered');
+              } else if (!found) {
+                console.log('Travelode Not Found!');
+                responseSend = true;
+                res.status(404).send(formatResponseMessage('Travelode not found: Invalid Travelode ID'));
+                
+                console.log('Switch triggered x');
+              }
+            });
+            break;
+          }
+          case 'media': {
+            mediaService.isMediaValid(mediaId, function (err, found) {
+              if (err) {
+                res.status(500).send(formatResponseMessage(util.format('%s', err)));
+                responseSend = true;
+                console.log('Switch triggered');
+              } else if (!found) {
+                console.log('Media Not Found !');
+                res.status(404).send(formatResponseMessage('Media not found: Invalid Media ID'));
+                responseSend = true;
+                console.log('Switch triggered');
+              }
+            });
+            break;
+          }
+        }
+
+        console.log(responseSend);
+
+        if(responseSend) {
+          // FIXME This should get triggered BUT is not. I think that's because async nature of javascript
+          console.log('Loop break triggered');
+          break;}
+
+      };
+
+      // If no response is sent yet, that means validation is done.
+      if (responseSend == false) {
+        const query = db.query('UPDATE ' + tableNameTravelodeMediaCategory + ' SET ? WHERE id = ?', [travelodeMediaCategoryData, id], function (err, result) {
+          console.log(query.sql);
+          console.log(result);
+
+          if (err) {
+            console.error(err);
+            res.status(500).send(formatResponseMessage(util.format('%s', err)));
+
+          }
+          else if (result.affectedRows == 0) {
+            res.status(404).send(formatResponseMessage('No Travelode-media-category Found'));
+          }
+
+          else {
+            console.log('Travelode media category updated: ', result);
+            res.status(200).send(formatResponseMessage('Travelode media category updated'));
+          }
+        });
+      }
+
+
+
+     /*  function isTravelodeValid() {
+        if (travelodeId) {
+          travelodeService.isTravelodeValid(travelodeId, function (err, found) {
+            if (err) {
+              return res.status(500).send(formatResponseMessage(util.format('%s', err)));
+            } else if (!found) {
+              console.log('Travelode Not Found!');
+              return res.status(404).send(formatResponseMessage('Travelode not found: Invalid Travelode ID'));
+            }
+            else {
+              
+            }
+          });
+        }
+        return callback();
+      }
+
+      function isCategoryValid() {
+        if (categoryId) {
+          travelodeService.isTravelodeValid(categoryId, function (err, found) {
+            if (err) {
+              return res.status(500).send(formatResponseMessage(util.format('%s', err)));
+            } else if (!found) {
+              console.log('Travelode Not Found!');
+              return res.status(404).send(formatResponseMessage('Travelode not found: Invalid Travelode ID'));
+            }
+            else {
+              return callback();
+            }
+          });
+        }
+        return callback();
+      }
+
+      function isMediaValid() {
+        if (mediaId) {
+          travelodeService.isTravelodeValid(mediaId, function (err, found) {
+            if (err) {
+              return res.status(500).send(formatResponseMessage(util.format('%s', err)));
+            } else if (!found) {
+              console.log('Travelode Not Found!');
+              return res.status(404).send(formatResponseMessage('Travelode not found: Invalid Travelode ID'));
+            }
+            else {
+              console.log('blah');
+            }
+          });
+        }
+        
+      }
+
+      function runQuery() {
+        const query = db.query('UPDATE ' + tableNameTravelodeMediaCategory + ' SET ? WHERE id = ?', [travelodeMediaCategoryData, id], function (err, result) {
+          console.log(query.sql);
+          console.log(result);
+
+          if (err) {
+            console.error(err);
+            res.status(500).send(formatResponseMessage(util.format('%s', err)));
+
+          }
+          else if (result.affectedRows == 0) {
+            res.status(404).send(formatResponseMessage('No Travelode-media-category Found'));
+          }
+
+          else {
+            console.log('Travelode media category updated: ', result);
+            res.status(200).send(formatResponseMessage('Travelode media category updated'));
+          }
+        });
+      }
+
+      async.waterfall([
+        isTravelodeValid,
+        isCategoryValid,
+        isMediaValid,
+        runQuery
+      ],
+      function(err, result){
+        if(err) console.log(err);
+        console.log(result);
+      }
+    ); */
+
+
+    }
+  });
+}
+
+/*   const travelode_media_category_data = {} 
+ 
+  if(categoryId || travelodeId || mediaId ) {
+    if (categoryId) {
+      Object.assign(travelode_media_category_data, {"categoryId": categoryId });
+    }
+    if (travelodeId) {
+      Object.assign(travelode_media_category_data, {"travelodeId": travelodeId });
+    }
+    if (mediaId) {
+      Object.assign(travelode_media_category_data, {"mediaId": mediaId });
+    }
+  }
+ 
+  console.log(travelode_media_category_data);
 */
-  // TODO Add async callback
-  travelodeMediaCategoryService.isTravelodeMediaCategoryValid(id, function(err, found) {
+
+/*   travelodeMediaCategoryService.isTravelodeMediaCategoryValid(id, function(err, found) {
     if (err) {
       res.status(500).send(formatResponseMessage(util.format('%s', err)));
     } else if (!found) {
@@ -229,10 +420,8 @@ function updateTravelodeMediaCategoryById(req, res) {
         }
       });
     }
-  });
-  }
-});
-}
+  }); */
+
 
 // DELETE /travelode/mediia/category/{id}
 function deleteTravelodeMediaCategoryById(req, res) {

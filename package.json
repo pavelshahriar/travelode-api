@@ -8,6 +8,7 @@
   "license": "",
   "main": "server.js",
   "dependencies": {
+    "async": "^2.6.1",
     "aws-config": "1.2.0",
     "aws-sdk": "2.290.0",
     "body-parser": "1.18.3",

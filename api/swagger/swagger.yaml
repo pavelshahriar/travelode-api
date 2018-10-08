@@ -28,7 +28,6 @@ tags:
 
 paths:
   /user:
-    # binds a127 app logic to a route
     x-swagger-router-controller: user
 
     get:
@@ -1356,16 +1355,6 @@ definitions:
         items:
           $ref: "#/definitions/Category"
 
-  Category:
-    type: object
-    properties:
-      id:
-        description: Category id
-        type: number
-      name:
-        description: Category name
-        type: string
-
   TravelodeMediaListResponse:
     required:
       - travelodeMedias
@@ -1376,6 +1365,16 @@ definitions:
         items:
           $ref: "#/definitions/TravelodeMedia"
   
+  Category:
+    type: object
+    properties:
+      id:
+        description: Category id
+        type: number
+      name:
+        description: Category name
+        type: string
+
   TravelodeMediaCategory:
     type: object
     properties:

@@ -2,7 +2,7 @@
 1. Clone the github project : `git clone git@github.com:pavelshahriar/travelode-api.git`
 2. Install swagger : `npm install -g swagger`
 3. Install project dependencies : `npm install`
-4. Create a `.env` file at the root with the following environment variales:
+4. Create a `env/.local` file at the root with the following environment variales:
    ```
     ENV= //set an unique environment name. system will look bucket of this name in server startup
     HOST=localhost

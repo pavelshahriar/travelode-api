@@ -1,0 +1,564 @@
+{
+	"info": {
+		"_postman_id": "6f22c88b-1f25-495f-a93f-a606cff4974b",
+		"name": "5. Travelode Media Category Flow",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "945f20a0-027c-4522-9881-2a67dd97ad56",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"user_id\", jsonData.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "testUser@test.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "testPassword",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "travelode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "db4c0712-cadb-46ef-8a74-527046d44a6a",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"travelode_id\", jsonData.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Test travelode of test user",
+							"type": "text"
+						},
+						{
+							"key": "userId",
+							"value": "{{user_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/travelode",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"travelode"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "media",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9b95a539-9360-4abc-b52a-11f1c823ca1f",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"media_id\", jsonData.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userId",
+							"value": "{{user_id}}",
+							"type": "text"
+						},
+						{
+							"key": "tripMedia",
+							"type": "file",
+							"src": "./test/newman/assets/test_image.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/media",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "travelode/media/category",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e621874d-ed37-4ee3-bb74-749599f4b804",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"travelode_media_category_id\", jsonData.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "travelodeId",
+							"value": "{{travelode_id}}",
+							"type": "text"
+						},
+						{
+							"key": "mediaId",
+							"value": "{{media_id}}",
+							"type": "text"
+						},
+						{
+							"key": "categoryId",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/travelode/media/category",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"travelode",
+						"media",
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "travelode/media/category",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "17f684d2-bc2a-4781-8e87-61659f3bb9ed",
+						"type": "text/javascript",
+						"exec": [
+							"/*",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"travelode_media_id\", jsonData.id);",
+							"*/"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "travelodeId",
+							"value": "{{travelode_id}}",
+							"type": "text"
+						},
+						{
+							"key": "mediaId",
+							"value": "{{media_id}}",
+							"type": "text"
+						},
+						{
+							"key": "categoryId",
+							"value": "{{travelode_media_category_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/travelode/media/category",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"travelode",
+						"media",
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "travelode/media/category/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "17f684d2-bc2a-4781-8e87-61659f3bb9ed",
+						"type": "text/javascript",
+						"exec": [
+							"/*",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"travelode_media_id\", jsonData.id);",
+							"*/"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "travelodeId",
+							"value": "{{travelode_id}}",
+							"type": "text"
+						},
+						{
+							"key": "mediaId",
+							"value": "{{media_id}}",
+							"type": "text"
+						},
+						{
+							"key": "categoryId",
+							"value": "{{travelode_media_category_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/travelode/media/category/{{travelode_media_category_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"travelode",
+						"media",
+						"category",
+						"{{travelode_media_category_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "travelode/media/category/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "17f684d2-bc2a-4781-8e87-61659f3bb9ed",
+						"type": "text/javascript",
+						"exec": [
+							"/*",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"travelode_media_id\", jsonData.id);",
+							"*/"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"travelodeId\": {{travelode_id}},\n  \"mediaId\": {{media_id}},\n  \"categoryId\": 2\n}"
+				},
+				"url": {
+					"raw": "{{url}}/travelode/media/category/{{travelode_media_category_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"travelode",
+						"media",
+						"category",
+						"{{travelode_media_category_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "travelode/media/category/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "17f684d2-bc2a-4781-8e87-61659f3bb9ed",
+						"type": "text/javascript",
+						"exec": [
+							"/*",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"travelode_media_id\", jsonData.id);",
+							"*/"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "travelodeId",
+							"value": "{{travelode_id}}",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "mediaId",
+							"value": "{{media_id}}",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "categoryId",
+							"value": "2",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/travelode/media/category/{{travelode_media_category_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"travelode",
+						"media",
+						"category",
+						"{{travelode_media_category_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "travelode/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf8ececa-331d-42f0-891e-233006d27bb9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"Description of the test Travelode\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/travelode/{{travelode_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"travelode",
+						"{{travelode_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "media/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "35067a14-08a7-4bb5-8a81-888b4f20db5f",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/media/{{media_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media",
+						"{{media_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user/{id}",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/user/{{user_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

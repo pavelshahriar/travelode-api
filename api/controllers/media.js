@@ -205,7 +205,7 @@ function updateMediaById(req, res) {
             res.status(400).send(formatResponseMessage('Invalid User Id'));
           }
           else {
-            // if location if passed.. check if its valud or not
+            // if location is passed.. check if its valid or not
             if(media_data.locationId){
               locationService.isLocationValid(media_data.locationId, function (err, found) {
                 if (err) {

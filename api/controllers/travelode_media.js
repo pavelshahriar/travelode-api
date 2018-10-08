@@ -369,8 +369,7 @@ function addTravelodeMedia(req, res) {
                   });
                 });
               } else {
-                res.status(201).send(formatResponseMessage("Travelode Media created", result.insertId));
-              }
+                  res.status(201).send(formatResponseMessage("Travelode Media created", result.insertId));              }
               // end of categories block
 
             }

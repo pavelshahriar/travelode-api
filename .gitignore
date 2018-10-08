@@ -15,6 +15,7 @@ pids
 
 # Dependency directory
 node_modules
+.vscode
 
 # exclude all of uploads folder, but keep the folder itself
 uploads/*
@@ -22,7 +23,7 @@ uploads/*
 
 # Users Environment Variables
 .lock-wscript
-.env
+env/*
 
 # Runtime configuration for swagger app
 config/runtime.yaml

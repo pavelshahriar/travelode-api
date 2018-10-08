@@ -1,0 +1,44 @@
+{
+    "id": "08406659-a8f5-415c-8dd4-d75f3978e1a2",
+    "name": "prod",
+    "values": [
+      {
+        "key": "url",
+        "value": "http://travelode-staging.herokuapp.com",
+        "description": "",
+        "type": "text",
+        "enabled": true
+      },
+      {
+        "key": "user_id",
+        "value": "<the created test user id>",
+        "description": "",
+        "type": "text",
+        "enabled": true
+      },
+      {
+        "key": "travelode_id",
+        "value": "<the created test travelode id>",
+        "description": "",
+        "type": "text",
+        "enabled": true
+      },
+      {
+        "key": "media_id",
+        "value": "<the created test media id>",
+        "description": "",
+        "type": "text",
+        "enabled": true
+      },
+      {
+        "key": "travelode_media_id",
+        "value": "<the created test travelode media id>",
+        "description": "",
+        "type": "text",
+        "enabled": true
+      }
+    ],
+    "_postman_variable_scope": "environment",
+    "_postman_exported_at": "2018-06-18T04:29:55.087Z",
+    "_postman_exported_using": "Postman/6.1.3"
+  }

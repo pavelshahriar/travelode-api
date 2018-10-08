@@ -1,9 +1,10 @@
 'use strict';
 
+const env = process.env['ENV'];
 const config = require('../../config');
 
 function bucketNameTransformer() {
-  return config.s3_bucket + '.' + config.env;
+  return (env !== 'prod') ? config.s3_bucket + '.' + env : config.s3_bucket;
 }
 
 module.exports = bucketNameTransformer;

@@ -1,6 +1,6 @@
 'use strict';
 
-const env = process.ENV
+const env = process.env['ENV']
 require('dotenv').config({path: 'env/.'+env});
 
 const configs = {
